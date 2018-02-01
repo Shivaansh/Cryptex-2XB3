@@ -9,7 +9,7 @@ public class Main {
 			System.out.println("Couldn't connect to API");
 		
 		for(Coin c : CoinList.getList()) {
-			System.out.printf("%s (%s) - %s\n", c.getName(),  c.getCode(), c.getTotalSupply());
+			System.out.printf("%s - %s - %s\n", c.getName(),  c.getCode(), c.getTotalSupply());
 		}
 	}
 

@@ -1,7 +1,7 @@
-package Main;
+package main;
 
-import Util.Coin;
-import Util.CoinList;
+import util.Coin;
+import util.CoinList;
 
 public class Main {
 	public static void main(String args[]) {

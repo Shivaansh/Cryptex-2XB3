@@ -13,9 +13,7 @@ public class Main {
 	public static void main(String args[]) {
 		try {
 			CoinList.init();
-			for(Coin c : CoinList.getList())
-				//System.out.println("Name: " + c.getName() + "(" + c.getCode() + "), Price: " + c.getPrice("USD") + " USD, Supply: " + c.getTotalSupply());
-				System.out.print("," + c.getCode());
+			CoinList.loadMarketData("USD");
 		} catch (APINotRespondingException e) {
 			e.printStackTrace();
 		}

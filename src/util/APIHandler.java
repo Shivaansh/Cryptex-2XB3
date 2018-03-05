@@ -41,8 +41,7 @@ public class APIHandler {
 	 * Makes a request to the API that does not require parameters
 	 * @param type type of call to make
 	 * @return JSON object containing data from API
-	 * @throws IOException if API does not respond
-	 * @throws ParseException if error occurs during parsing API object
+	 * @throws APINotRespondingException if API does not respond or responds with an error
 	 */
 	public static JSONObject request(CallType type) throws APINotRespondingException {
 		return request(type, "", "");
@@ -54,9 +53,7 @@ public class APIHandler {
 	 * @param inParam API input parameters
 	 * @param outParam API output parameters
 	 * @return JSON object containing data from API
-	 * @throws IOException if API does not respond
-	 * @throws ParseException if error occurs during parsing API object
-	 * @throws APINotRespondingException 
+	 * @throws APINotRespondingException if API does not respond or responds with an error
 	 */
 	public static JSONObject request(CallType type, String inParam, String outParam) throws APINotRespondingException {
 				
@@ -72,7 +69,7 @@ public class APIHandler {
 			throw new APINotRespondingException(e);
 		}
 		
-		//Logger.info("Attempting to fetch " + url.toString());
+		Logger.info("Attempting to fetch " + url.toString());
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 		//Logger.info("Connection successful, parsing object ...");

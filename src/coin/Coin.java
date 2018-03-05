@@ -45,15 +45,16 @@ public class Coin implements Comparable<Coin> {
 	}
 	
 	/**
-	 * Returns market cap of coin relative to a specific coin through an API call
+	 * Returns market cap of coin currently stored
 	 * @param relCoinCode currency code, returns market cap relative to this currency
-	 * @return current market Cap of coin (relative to relCoinCode)
-	 * @throws APINotRespondingException if API does not respond or responds with an error
+	 * @return current market Cap of coin
 	 */
-	public double getMarketCap(String relCoinCode) throws APINotRespondingException {
-		JSONObject mainObj = (JSONObject)APIHandler.request(CallType.PRICE_MULTI_FULL, this.code, relCoinCode);
-		JSONObject rawObj = (JSONObject) ((JSONObject) ((JSONObject) mainObj.get("RAW")).get(this.code)).get(relCoinCode);
-		return Double.parseDouble(rawObj.get("MKTCAP").toString());
+	public double getMarketCap() {
+		return mktCap;
+	}
+	
+	public void setMarketCap(double d){
+		mktCap = d;
 	}
 	
 	/**

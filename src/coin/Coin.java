@@ -1,21 +1,27 @@
 package coin;
 
+import java.io.IOException;
+
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
 import util.APIHandler;
 import util.APIHandler.CallType;
+import util.APINotRespondingException;
 
 /**
  * Coin object - stores data on a specific cryptocurrency
  * @author Somar Aani
  *
  */
-public class Coin {
+public class Coin implements Comparable<Coin> {
 	
 	private String name; 
 	private String code; 
 	
 	private double totalSupply; 
+	private double mktCap;
+	private double price;
 	
 	private final String NAME_TAG = "CoinName";
 	private final String CODE_TAG = "Name";
@@ -39,29 +45,40 @@ public class Coin {
 	}
 	
 	/**
-	 * Returns market cap of coin relative to USD through an API call
-	 * @return current market Cap of coin (relative to USD)
-	 */
-	public double getMarketCap() {
-		return getMarketCap("USD");
-	}
-	
-	/**
 	 * Returns market cap of coin relative to a specific coin through an API call
-	 * @param relCoinCode 3 character coin code, returns market cap relative to this currency
+	 * @param relCoinCode currency code, returns market cap relative to this currency
 	 * @return current market Cap of coin (relative to relCoinCode)
+	 * @throws APINotRespondingException if API does not respond or responds with an error
 	 */
-	public double getMarketCap(String relCoinCode) {
+	public double getMarketCap(String relCoinCode) throws APINotRespondingException {
 		JSONObject mainObj = (JSONObject)APIHandler.request(CallType.PRICE_MULTI_FULL, this.code, relCoinCode);
 		JSONObject rawObj = (JSONObject) ((JSONObject) ((JSONObject) mainObj.get("RAW")).get(this.code)).get(relCoinCode);
 		return Double.parseDouble(rawObj.get("MKTCAP").toString());
+	}
+	
+	/**
+	 * Returns price of coin relative to a currency through an API call
+	 * @param relCoinCod currency code, returns price relative to this currency
+	 * @return current price of coin (relative to relCoinCode)
+	 * @throws APINotRespondingException if API does not respond or responds with an error
+	 */
+	public double getPrice(String relCoinCode) throws APINotRespondingException{
+		try {
+			JSONObject mainObj = (JSONObject)APIHandler.request(CallType.PRICE, this.code, relCoinCode);
+			return Double.parseDouble(mainObj.get(relCoinCode).toString());
+		} catch(APINotRespondingException e) {
+			if(e.getMessage().contains("There is no data"))
+				return Double.NaN;
+			else
+				throw new APINotRespondingException(e);
+		}
 	}
 	
 	/**  @return name of coin */
 	public String getName() {
 		return name;
 	}
-	/**  @return 3 digit code of coin */
+	/**  @return code of coin */
 	public String getCode() {
 		return code;
 	}
@@ -69,6 +86,11 @@ public class Coin {
 	/**  @return total supply of coin */
 	public double getTotalSupply() {
 		return totalSupply;
+	}
+
+	@Override
+	public int compareTo(Coin c) {
+		return 0;
 	}
 	
 }

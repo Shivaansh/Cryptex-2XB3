@@ -1,5 +1,7 @@
 package coin;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -57,7 +59,8 @@ public class CoinList{
 	 * @throws APINotRespondingException if API does not respond or responds with an error
 	 */
 	public static void loadMarketData(String relCoinCode) throws APINotRespondingException {
-		//to-do -> load all market data for coins (do ~50 at a time for speed)
+		
+		//loads market data MAX_MARKET_INPUT coins at a time, to speed up the process
 		
 		if(!isInit)
 			throw new IllegalStateException("CoinList must be initialized!");
@@ -101,7 +104,7 @@ public class CoinList{
 				currCoinObj = currEntry.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
 				list[i].setMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsDouble());
 				list[i].setPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsDouble());
-				
+				list[i].setDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsDouble());
 				if(iterator.hasNext())
 					currEntry = iterator.next();
 			} else {
@@ -169,7 +172,6 @@ public class CoinList{
 		case MKTCAP: comp = new MarketCapComparator(); break;
 		case CHANGE: 
 		}
-		
-		//Sort.sort(list, comp);
+
 	}
 }

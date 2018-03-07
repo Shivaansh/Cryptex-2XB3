@@ -15,6 +15,7 @@ public class Coin implements Comparable<Coin> {
 	private double totalSupply; 
 	private double mktCap;
 	private double price;
+	private double dailyChangePercent; 
 	
 	private final String NAME_TAG = "CoinName";
 	private final String CODE_TAG = "Name";
@@ -82,6 +83,22 @@ public class Coin implements Comparable<Coin> {
 	/**  @return total supply of coin */
 	public double getTotalSupply() {
 		return totalSupply;
+	}
+	
+	/**
+	 * Sets the daily (24h) price change for the coin
+	 * @param c 24h change for coin
+	 */
+	public void setDailyChangePercent(double c) {
+		dailyChangePercent = c;
+	}
+	
+	/**
+	 * Gets the coins daily (24h change) in price
+	 * @return the coins 24h change in price
+	 */
+	public double getDailyChangePercent() {
+		return dailyChangePercent;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package coin;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -160,6 +161,15 @@ public class CoinList{
 	 * @param s SortOrder enum to specify how to sort
 	 */
 	public static void sort(SortOrder s) {
-		//to-do -> sort depending on s
+		Comparator<Coin> comp;
+		
+		switch(s) {
+		case ALPHABETICAL: comp = new NameComparator(); break;
+		case PRICE: comp = new PriceComparator(); break;
+		case MKTCAP: comp = new MarketCapComparator(); break;
+		case CHANGE: 
+		}
+		
+		//Sort.sort(list, comp);
 	}
 }

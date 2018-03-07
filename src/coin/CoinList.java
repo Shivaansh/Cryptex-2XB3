@@ -1,7 +1,5 @@
 package coin;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -102,9 +100,15 @@ public class CoinList{
 		for(int i = start; i < end - 1; i++) {
 			if(list[i].getCode().equals(currEntry.getKey())) {
 				currCoinObj = currEntry.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
+				
 				list[i].setMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsDouble());
 				list[i].setPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsDouble());
-				list[i].setDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsDouble());
+				
+				if(currCoinObj.get("CHANGEPCT24HOUR").isJsonNull())
+					list[i].setDailyChangePercent(Double.NaN);
+				else
+					list[i].setDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsDouble());
+
 				if(iterator.hasNext())
 					currEntry = iterator.next();
 			} else {

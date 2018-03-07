@@ -4,12 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 /**
  * Includes methods to handle API calls
@@ -43,7 +40,7 @@ public class APIHandler {
 	 * @return JSON object containing data from API
 	 * @throws APINotRespondingException if API does not respond or responds with an error
 	 */
-	public static JSONObject request(CallType type) throws APINotRespondingException {
+	public static JsonObject request(CallType type) throws APINotRespondingException {
 		return request(type, "", "");
 	} 
 	
@@ -55,12 +52,11 @@ public class APIHandler {
 	 * @return JSON object containing data from API
 	 * @throws APINotRespondingException if API does not respond or responds with an error
 	 */
-	public static JSONObject request(CallType type, String inParam, String outParam) throws APINotRespondingException {
-				
-		//open api 
+	public static JsonObject request(CallType type, String inParam, String outParam) throws APINotRespondingException {
 		InputStream input;
 		URL url;
 		
+		//open stream to api
 		try {
 			url = new URL(BASE_URL + type.path + "?" + type.inputParam + "=" + inParam + "&" + type.outputParam +"=" + outParam);
 			input = url.openConnection().getInputStream();
@@ -69,33 +65,22 @@ public class APIHandler {
 			throw new APINotRespondingException(e);
 		}
 		
-		Logger.info("Attempting to fetch " + url.toString());
+		//Logger.info("Attempting to fetch " + url.toString());
 		
+		//create rootObject from API JSON
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-		//Logger.info("Connection successful, parsing object ...");
+		JsonObject rootObject = new Gson().fromJson(reader, JsonObject.class);
 		
-		//parses JSON to create object array
-		JSONParser parser = new JSONParser();
-		JSONObject mainObj;
-		try {
-			mainObj = (JSONObject) parser.parse(reader);
-		} catch (IOException | ParseException e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-		if(mainObj == null)
+		if(rootObject == null)
 			throw new APINotRespondingException();
 					
-		//get response (not always available)
-		String response = (String) mainObj.get("Response");
-		if(response != null && response.equals("Error"))
-			throw new APINotRespondingException(mainObj.get("Message").toString());
+		//get response (not always available), throw Exception if error
+		if(rootObject.has("Response") && rootObject.get("Response").equals("Error"))
+			throw new APINotRespondingException(rootObject.get("Message").getAsString());
 			
-		//Logger.info("API Response: " + response);
+		//Logger.info("API Response: " + rootObject.get("Response"));
 	
-		//return object
-		return mainObj;
+		return rootObject;
 	}
-
+	
 }

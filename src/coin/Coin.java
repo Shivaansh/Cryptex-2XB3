@@ -1,13 +1,6 @@
 package coin;
 
-import java.io.IOException;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
-
-import util.APIHandler;
-import util.APIHandler.CallType;
-import util.APINotRespondingException;
+import com.google.gson.JsonObject;
 
 /**
  * Coin object - stores data on a specific cryptocurrency
@@ -29,14 +22,14 @@ public class Coin implements Comparable<Coin> {
 	
 	/**
 	 * Constructor - creates Coin from JSON Object
-	 * @param o JSONObject which populates the fields in the coin object
+	 * @param jsonObject JSONObject which populates the fields in the coin object
 	 */
-	public Coin(JSONObject o) {
-		name = (String) o.get(NAME_TAG);
-		code = o.get(CODE_TAG).toString();
+	public Coin(JsonObject jsonObject) {
+		name = jsonObject.get(NAME_TAG).getAsString();
+		code = jsonObject.get(CODE_TAG).getAsString();
 		
 		//totalSupply not always consistently formatted in API
-		String totalSupplyStr = o.get(SUPLLY_TAG).toString().replace(",","").replace(" ", "");
+		String totalSupplyStr = jsonObject.get(SUPLLY_TAG).toString().replace(",","").replace(" ", "");
 		try {
 			totalSupply = Double.parseDouble(totalSupplyStr);
 		}catch(NumberFormatException e){
@@ -53,26 +46,28 @@ public class Coin implements Comparable<Coin> {
 		return mktCap;
 	}
 	
+	/**
+	 * Sets marketCap of coin
+	 * @param d marketCap to set
+	 */
 	public void setMarketCap(double d){
 		mktCap = d;
 	}
 	
 	/**
-	 * Returns price of coin relative to a currency through an API call
-	 * @param relCoinCod currency code, returns price relative to this currency
-	 * @return current price of coin (relative to relCoinCode)
-	 * @throws APINotRespondingException if API does not respond or responds with an error
+	 * Returns price of coin 
+	 * @return current price of coin 
 	 */
-	public double getPrice(String relCoinCode) throws APINotRespondingException{
-		try {
-			JSONObject mainObj = (JSONObject)APIHandler.request(CallType.PRICE, this.code, relCoinCode);
-			return Double.parseDouble(mainObj.get(relCoinCode).toString());
-		} catch(APINotRespondingException e) {
-			if(e.getMessage().contains("There is no data"))
-				return Double.NaN;
-			else
-				throw new APINotRespondingException(e);
-		}
+	public double getPrice(){
+		return price;
+	}
+	
+	/**
+	 * Sets coin price
+	 * @param p price to set
+	 */
+	public void setPrice(Double p) {
+		price = p;
 	}
 	
 	/**  @return name of coin */
@@ -92,6 +87,11 @@ public class Coin implements Comparable<Coin> {
 	@Override
 	public int compareTo(Coin c) {
 		return 0;
+	}
+	
+	@Override
+	public String toString() {
+		return name + " (" + code + ")";
 	}
 	
 }

@@ -1,16 +1,11 @@
 package coin;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import util.APIHandler;
 import util.Logger;
@@ -39,20 +34,16 @@ public class CoinList{
 	public static void init() throws APINotRespondingException {
 		Logger.info("Initializing coin list ...");
 		
-		//gets coin list via API call
-		JSONObject mainObj;
-		mainObj = APIHandler.request(CallType.COIN_LIST);
-				
-		Object[] values = ((JSONObject) mainObj.get("Data")).values().toArray();
+		//gets coin list as JsonObject via API call
+		JsonObject mainObj = APIHandler.request(CallType.COIN_LIST, "", "").get("Data").getAsJsonObject();
+	
+		Set<Entry<String, JsonElement>> dataMap = mainObj.entrySet();
+		list = new Coin[dataMap.size()];
 		
-		//initialize state variables
-		list = new Coin[values.length];
-		
-		//adds coins to list
-		JSONObject obj;
-		for(int i = 0; i < values.length; i++) {
-			obj = (JSONObject)values[i];
-			list[i] = new Coin(obj);
+		//initializes all coins in list using entry set
+		int i = 0;
+		for(Entry<String, JsonElement> e : dataMap) {
+			list[i++] = new Coin(e.getValue().getAsJsonObject());
 		}
 		
 		isInit = true;
@@ -70,12 +61,20 @@ public class CoinList{
 		if(!isInit)
 			throw new IllegalStateException("CoinList must be initialized!");
 		
+		Logger.info("Loading market data relative to " + relCoinCode);
+		
 		String param = "";
 		int i = 0;
+		
+		//divide into MAX_MARKET_INPUT length blocks
 		for(; i < list.length/MAX_MARKET_INPUT; i++) {
+			
+			//create input parameter for block
 			for(int j = i * MAX_MARKET_INPUT; j < MAX_MARKET_INPUT * (i + 1); j++) {
 				param += list[j].getCode() + ",";
 			}
+			
+			//set coin data for the block 
 			setCoinData(i * MAX_MARKET_INPUT, MAX_MARKET_INPUT * (i + 1), param, relCoinCode);
 			param = "";
 		}
@@ -84,37 +83,30 @@ public class CoinList{
 			param += list[j].getCode() + ",";
 		
 		setCoinData(i * MAX_MARKET_INPUT, list.length, param, relCoinCode);
-		
+		Logger.info("Market data successfully loaded");
 	}
 	
 	//helper method, assigns all coin data from start to end in the coin list
 	private static void setCoinData(int start, int end, String param, String relCoinCode) throws APINotRespondingException {
-		JSONObject mainObj, coinObj;
-		Map<String, JSONObject> mainSet;
+		JsonObject rawObj = APIHandler.request(CallType.PRICE_MULTI_FULL, param, relCoinCode).get("RAW").getAsJsonObject();
+		Set<Entry<String, JsonElement>> dataMap = rawObj.entrySet();
 		
-		mainObj = (JSONObject)APIHandler.request(CallType.PRICE_MULTI_FULL, param, relCoinCode);
-		mainSet = (Map<String, JSONObject>) mainObj.get("RAW");		
-		for(int j = start; j < end; j++) {
-			coinObj = mainSet.get(list[j].getCode());
-			if(coinObj != null) {
-				double mkt = Double.parseDouble(((JSONObject) coinObj.get(relCoinCode)).get("MKTCAP").toString());
-				list[j].setMarketCap(mkt);
-			}else {
-				list[j].setMarketCap(Double.NaN);
+		JsonObject currCoinObj;
+		Iterator<Entry<String, JsonElement>> iterator = dataMap.iterator();
+		Entry<String, JsonElement> currEntry = iterator.next();
+				
+		for(int i = start; i < end - 1; i++) {
+			if(list[i].getCode().equals(currEntry.getKey())) {
+				currCoinObj = currEntry.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
+				list[i].setMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsDouble());
+				list[i].setPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsDouble());
+				
+				if(iterator.hasNext())
+					currEntry = iterator.next();
+			} else {
+				list[i].setMarketCap(Double.NaN);
+				list[i].setPrice(Double.NaN);
 			}
-		}
-	}
-	
-	public static void main(String[] args) {
-		try {
-			init();
-			loadMarketData("USD");
-			System.out.println(getCoin("BTC").getMarketCap());
-			loadMarketData("CAD");
-		
-		} catch (APINotRespondingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	
@@ -124,6 +116,8 @@ public class CoinList{
 	 * @return Coin object representing the specific cryptocurrency
 	 */
 	public static Coin getCoin(String code) {
+		//to-do -> make faster by using binary search
+		
 		if(!isInit)
 			throw new IllegalStateException("CoinList must be initialized!");
 		
@@ -150,7 +144,7 @@ public class CoinList{
 	 * @return SortOrder enum of current sorting order
 	 */
 	public SortOrder getSortOrder() {
-		return this.sortOrder;
+		return CoinList.sortOrder;
 	}
 	
 	/**
@@ -158,7 +152,7 @@ public class CoinList{
 	 * @param SortOrder enum of wanted sort order
 	 */
 	public void setSortOrder(SortOrder s) {
-		this.sortOrder = s;
+		CoinList.sortOrder = s;
 	}
 	
 	/**

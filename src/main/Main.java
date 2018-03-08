@@ -4,7 +4,7 @@ import coin.Coin;
 import coin.CoinList;
 import util.APINotRespondingException;
 import util.Logger;
-//Test branch
+
 public class Main {
 	public static void main(String args[]) {
 		try {

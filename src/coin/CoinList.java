@@ -174,7 +174,7 @@ public class CoinList{
 		case ALPHABETICAL: comp = new NameComparator(); break;
 		case PRICE: comp = new PriceComparator(); break;
 		case MKTCAP: comp = new MarketCapComparator(); break;
-		case CHANGE: 
+		case CHANGE: comp = new DailyChangeComparator(); break;
 		}
 
 	}

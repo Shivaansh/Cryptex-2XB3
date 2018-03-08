@@ -18,7 +18,8 @@ public class APIHandler {
 	public static enum CallType {
 		COIN_LIST ("all/coinlist"),
 		PRICE_MULTI_FULL ("pricemultifull", "fsyms", "tsyms"),
-		PRICE ("price", "fsym", "tsyms");
+		PRICE ("price", "fsym", "tsyms"), 
+		HISTO_DAY("histoday", "fsym", "tsym", "limit", "toTs", "allData");
 		
 		/** contains path to data in API */
 		private final String path;

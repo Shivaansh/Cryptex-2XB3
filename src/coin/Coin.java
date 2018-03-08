@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
  * @author Somar Aani
  *
  */
-public class Coin implements Comparable<Coin> {
+public class Coin{
 	
 	private String name; 
 	private String code; 
@@ -101,11 +101,6 @@ public class Coin implements Comparable<Coin> {
 		return dailyChangePercent;
 	}
 
-	@Override
-	public int compareTo(Coin c) {
-		return 0;
-	}
-	
 	@Override
 	public String toString() {
 		return name + " (" + code + ")";

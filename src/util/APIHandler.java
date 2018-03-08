@@ -16,57 +16,51 @@ public class APIHandler {
 	
 	/** Enum containing all possible API calls */
 	public static enum CallType {
-		COIN_LIST ("all/coinlist", "", ""),
+		COIN_LIST ("all/coinlist"),
 		PRICE_MULTI_FULL ("pricemultifull", "fsyms", "tsyms"),
 		PRICE ("price", "fsym", "tsyms");
 		
 		/** contains path to data in API */
 		private final String path;
-		private final String inputParam;
-		private final String outputParam;
+		private final String[] params;
 		
-		CallType(String path, String inputParam, String outputParam) {
+		CallType(String path, String... params) {
 			this.path = path;
-			this.inputParam = inputParam;
-			this.outputParam = outputParam;
+			this.params = params;
 		}
 	}
 	
 	private final static String BASE_URL = "https://min-api.cryptocompare.com/data/";
 	
 	/**
-	 * Makes a request to the API that does not require parameters
-	 * @param type type of call to make
-	 * @return JSON object containing data from API
-	 * @throws APINotRespondingException if API does not respond or responds with an error
-	 */
-	public static JsonObject request(CallType type) throws APINotRespondingException {
-		return request(type, "", "");
-	} 
-	
-	/**
 	 * Makes a request to the API using parameters
 	 * @param type type of call to make
-	 * @param inParam API input parameters
-	 * @param outParam API output parameters
+	 * @param params list of input parameters
 	 * @return JSON object containing data from API
 	 * @throws APINotRespondingException if API does not respond or responds with an error
 	 */
-	public static JsonObject request(CallType type, String inParam, String outParam) throws APINotRespondingException {
+	public static JsonObject request(CallType type, String... params) throws APINotRespondingException {
+		
+		//create url from input parameters
+		String urlString = BASE_URL + type.path + "?";
+		for(int i = 0; i < type.params.length; i++) {
+			urlString += type.params[i] + "=" + params[i] + "&";
+		}
+		
+		//Logger.info("Attempting to fetch " + urlString);
+		
 		InputStream input;
 		URL url;
 		
 		//open stream to api
 		try {
-			url = new URL(BASE_URL + type.path + "?" + type.inputParam + "=" + inParam + "&" + type.outputParam +"=" + outParam);
+			url = new URL(urlString);
 			input = url.openConnection().getInputStream();
 		}
 		catch(IOException e) {
 			throw new APINotRespondingException(e);
 		}
-		
-		//Logger.info("Attempting to fetch " + url.toString());
-		
+				
 		//create rootObject from API JSON
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 		JsonObject rootObject = new Gson().fromJson(reader, JsonObject.class);

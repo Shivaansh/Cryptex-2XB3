@@ -36,7 +36,7 @@ public class CoinList{
 		Logger.info("Initializing coin list ...");
 		
 		//gets coin list as JsonObject via API call
-		JsonObject mainObj = APIHandler.request(CallType.COIN_LIST, "", "").get("Data").getAsJsonObject();
+		JsonObject mainObj = APIHandler.request(CallType.COIN_LIST).get("Data").getAsJsonObject();
 	
 		Set<Entry<String, JsonElement>> dataMap = mainObj.entrySet();
 		list = new Coin[dataMap.size()];

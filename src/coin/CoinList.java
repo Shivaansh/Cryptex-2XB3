@@ -23,7 +23,7 @@ public class CoinList{
 	private static Coin[] list; 
 	private static SortOrder sortOrder = SortOrder.PRICE;
 	
-	private static boolean isInit; 
+	private static boolean isInit = false; 
 	
 	private static final int MAX_MARKET_INPUT = 60;
 	
@@ -49,6 +49,14 @@ public class CoinList{
 		
 		isInit = true;
 		Logger.info("Coin list successfully initialized - " + list.length + " coins");
+	}
+	
+	/**
+	 * Checks whether the coin list has been successfully initialized
+	 * @return if coin list was successfully created 
+	 */
+	public boolean isInitialized() {
+		return isInit;
 	}
 	
 	/**

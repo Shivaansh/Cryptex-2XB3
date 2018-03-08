@@ -7,6 +7,7 @@ import util.Logger;
 
 public class Main {
 	public static void main(String args[]) {
+		//Test Comment  - Z
 		try {
 			CoinList.init();
 			CoinList.loadMarketData("USD");

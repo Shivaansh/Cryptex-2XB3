@@ -98,7 +98,7 @@ public class CoinList{
 	
 	//helper method, assigns all coin data from start to end in the coin list
 	private static void setCoinData(int start, int end, String param, String relCoinCode) throws APINotRespondingException {
-		JsonObject rawObj = APIHandler.request(CallType.PRICE_MULTI_FULL, param, relCoinCode).get("RAW").getAsJsonObject();
+		JsonObject rawObj = APIHandler.request(CallType.PRICE_MULTI_FULL, "fsyms=" + param, "tsyms=" + relCoinCode).get("RAW").getAsJsonObject();
 		Set<Entry<String, JsonElement>> dataMap = rawObj.entrySet();
 		
 		JsonObject currCoinObj;

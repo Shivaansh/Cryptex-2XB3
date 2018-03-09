@@ -17,17 +17,15 @@ public class APIHandler {
 	/** Enum containing all possible API calls */
 	public static enum CallType {
 		COIN_LIST ("all/coinlist"),
-		PRICE_MULTI_FULL ("pricemultifull", "fsyms", "tsyms"),
-		PRICE ("price", "fsym", "tsyms"), 
-		HISTO_DAY("histoday", "fsym", "tsym", "limit", "toTs", "allData");
+		PRICE_MULTI_FULL ("pricemultifull"),
+		PRICE ("price"), 
+		HISTO_DAY("histoday");
 		
 		/** contains path to data in API */
 		private final String path;
-		private final String[] params;
 		
-		CallType(String path, String... params) {
+		CallType(String path) {
 			this.path = path;
-			this.params = params;
 		}
 	}
 	
@@ -44,11 +42,11 @@ public class APIHandler {
 		
 		//create url from input parameters
 		String urlString = BASE_URL + type.path + "?";
-		for(int i = 0; i < type.params.length; i++) {
-			urlString += type.params[i] + "=" + params[i] + "&";
+		for(int i = 0; i < params.length; i++) {
+			urlString += params[i] + "&";
 		}
 		
-		//Logger.info("Attempting to fetch " + urlString);
+		Logger.info("Attempting to fetch " + urlString);
 		
 		InputStream input;
 		URL url;

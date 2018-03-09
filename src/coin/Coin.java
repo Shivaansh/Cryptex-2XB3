@@ -2,6 +2,10 @@ package coin;
 
 import com.google.gson.JsonObject;
 
+import util.APIHandler;
+import util.APIHandler.CallType;
+import util.APINotRespondingException;
+
 /**
  * Coin object - stores data on a specific cryptocurrency
  * @author Somar Aani
@@ -100,7 +104,7 @@ public class Coin{
 	public double getDailyChangePercent() {
 		return dailyChangePercent;
 	}
-
+	
 	@Override
 	public String toString() {
 		return name + " (" + code + ")";

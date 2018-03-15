@@ -184,10 +184,8 @@ public class Coin{
 		try {
 			from = dateFormat.parse(fromDate);
 			to = dateFormat.parse(toDate);
-			
 		} catch (ParseException e) {
-			e.printStackTrace();
-			return null;
+			throw new IllegalArgumentException("Date must be of the format dd/MM/yyyy");
 		}
 	
 	    long toTs = to.getTime()/1000;

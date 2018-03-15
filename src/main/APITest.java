@@ -9,7 +9,7 @@ import coin.CoinList;
 import util.APINotRespondingException;
 import util.Logger;
 
-public class Main {
+public class APITest {
 	public static void main(String args[]) {
 		try {
 			CoinList.init();

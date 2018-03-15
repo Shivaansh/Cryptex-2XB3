@@ -149,7 +149,7 @@ public class Coin{
 	    	throw new IllegalArgumentException("Dates cannot be more than 2000 dates apart");
 	    
 
-		JsonArray dataArray = APIHandler.request(CallType.HISTO_DAY, "fsym=" + this.code, "tsym=" + relCoinCode, "toTs=" +toTs, "limit=" + limit).getAsJsonArray("Data");
+		JsonArray dataArray = APIHandler.request(CallType.HISTO_DAY, "fsym", this.code, "tsym", relCoinCode, "toT", String.valueOf(toTs), "limit", String.valueOf(limit)).getAsJsonArray("Data");
 		
 		double[] data = new double[dataArray.size()];
 		int i = 0;

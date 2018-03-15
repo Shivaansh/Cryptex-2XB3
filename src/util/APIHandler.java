@@ -32,18 +32,23 @@ public class APIHandler {
 	private final static String BASE_URL = "https://min-api.cryptocompare.com/data/";
 	
 	/**
-	 * Makes a request to the API using parameters
+	 * Makes a request to the API using a CallType and wanted parameters
 	 * @param type type of call to make
-	 * @param params list of input parameters
+	 * @param params list of input parameters. Each input field must be followed by its parameter. Format is (tag1, input1, tag2, input2 ... tag n, input n)
 	 * @return JSON object containing data from API
 	 * @throws APINotRespondingException if API does not respond or responds with an error
+	 * @throws IllegalArgumentException if length of parameters is not even (not every parameter tag has a corresponding input)
 	 */
 	public static JsonObject request(CallType type, String... params) throws APINotRespondingException {
 		
+		if(params.length % 2 != 0) {
+			throw new IllegalArgumentException("Input parameters must match number of tags!");
+		}
+		
 		//create url from input parameters
 		String urlString = BASE_URL + type.path + "?";
-		for(int i = 0; i < params.length; i++) {
-			urlString += params[i] + "&";
+		for(int i = 0; i < params.length - 1; i++) {
+			urlString += params[i] + "=" + params[i+1] + "&";
 		}
 		
 		Logger.info("Attempting to fetch " + urlString);

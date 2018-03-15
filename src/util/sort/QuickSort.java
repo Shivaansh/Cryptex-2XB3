@@ -11,7 +11,6 @@ public class QuickSort {
 	 * @param c comparator object to use to compare coins
 	 */
 	public static void sort(Coin[] list, Comparator<Coin> c) {
-		
 	}
 	
 	//add private helped / sorting methods here

@@ -162,6 +162,8 @@ public class CoinList{
 			if(list[i].getCode().equals(code))
 				return list[i];
 		}
+		
+		
 		return null;
 	}
 	

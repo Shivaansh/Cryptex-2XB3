@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import util.APIHandler;
 import util.Logger;
 import util.APIHandler.CallType;
+import util.sort.QuickSort;
 import util.APINotRespondingException;
 
 /**
@@ -159,7 +160,7 @@ public class CoinList{
 	 * Gets the current sort order
 	 * @return SortOrder enum of current sorting order
 	 */
-	public SortOrder getSortOrder() {
+	public static SortOrder getSortOrder() {
 		return CoinList.sortOrder;
 	}
 	
@@ -167,8 +168,23 @@ public class CoinList{
 	 * Sets the sort order
 	 * @param SortOrder enum of wanted sort order
 	 */
-	public void setSortOrder(SortOrder s) {
+	public static void setSortOrder(SortOrder s) {
 		CoinList.sortOrder = s;
+	}
+	
+	/**
+	 * Gets the correct comparator for the given SortOrder
+	 * @param s SortOrder to get the comparator for 
+	 * @return Comparator object for the given SortOrder
+	 */
+	private static Comparator<Coin> getComparator(SortOrder s) {
+		switch(s) {
+		case ALPHABETICAL: return new NameComparator(); 
+		case PRICE: return new PriceComparator(); 
+		case MKTCAP: return new MarketCapComparator();
+		case CHANGE: return new DailyChangeComparator();
+		}
+		return null;
 	}
 	
 	/**
@@ -176,14 +192,6 @@ public class CoinList{
 	 * @param s SortOrder enum to specify how to sort
 	 */
 	public static void sort(SortOrder s) {
-		Comparator<Coin> comp;
-		
-		switch(s) {
-		case ALPHABETICAL: comp = new NameComparator(); break;
-		case PRICE: comp = new PriceComparator(); break;
-		case MKTCAP: comp = new MarketCapComparator(); break;
-		case CHANGE: comp = new DailyChangeComparator(); break;
-		}
-
+		QuickSort.sort(list, getComparator(s));
 	}
 }

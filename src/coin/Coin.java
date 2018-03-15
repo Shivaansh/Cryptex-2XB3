@@ -58,7 +58,6 @@ public class Coin{
 	
 	/**
 	 * Returns market cap of coin currently stored
-	 * @param relCoinCode currency code, returns market cap relative to this currency
 	 * @return current market Cap of coin
 	 */
 	public double getMarketCap() {

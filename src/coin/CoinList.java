@@ -30,7 +30,6 @@ public class CoinList{
 	
 	/**
 	 * Initializes the coin list by making an API call
-	 * @return if the list was initialized correctly
 	 * @throws APINotRespondingException if API does not respond or responds with an error
 	 */
 	public static void init() throws APINotRespondingException {
@@ -61,7 +60,7 @@ public class CoinList{
 	}
 	
 	/**
-	 * Loads market data for all coins in the list, relating to {@link relCoinCode}
+	 * Loads market data for all coins in the list, relating to relCoinCode
 	 * @param relCoinCode coin symbol 
 	 * @throws APINotRespondingException if API does not respond or responds with an error
 	 */
@@ -187,7 +186,7 @@ public class CoinList{
 	
 	/**
 	 * Sets the sort order
-	 * @param SortOrder enum of wanted sort order
+	 * @param s SortOrder enum of wanted sort order
 	 */
 	public static void setSortOrder(SortOrder s) {
 		CoinList.sortOrder = s;
@@ -209,7 +208,7 @@ public class CoinList{
 	}
 	
 	/**
-	 * Sorts list based on SortOrder {@link s}
+	 * Sorts list based on SortOrder s
 	 * @param s SortOrder enum to specify how to sort
 	 */
 	public static void sort(SortOrder s) {

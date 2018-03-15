@@ -65,7 +65,7 @@ public class CoinList{
 	 * @param relCoinCode coin symbol 
 	 * @throws APINotRespondingException if API does not respond or responds with an error
 	 */
-	public static void loadMarketData(String relCoinCode) throws APINotRespondingException {
+	public static void loadAllMarketData(String relCoinCode) throws APINotRespondingException {
 		
 		//loads market data MAX_MARKET_INPUT coins at a time, to speed up the process
 		
@@ -86,29 +86,39 @@ public class CoinList{
 			}
 			
 			//set coin data for the block 
-			setCoinData(i * MAX_MARKET_INPUT, MAX_MARKET_INPUT * (i + 1), param, relCoinCode);
+			setCoinMarketData(i * MAX_MARKET_INPUT, MAX_MARKET_INPUT * (i + 1), param, relCoinCode);
 			param = "";
 		}
 		
+		//creates parameter for any left over coins
 		for(int j = i * MAX_MARKET_INPUT; j < list.length; j++) 
 			param += list[j].getCode() + ",";
 		
-		setCoinData(i * MAX_MARKET_INPUT, list.length, param, relCoinCode);
+		//set data for left over coins
+		setCoinMarketData(i * MAX_MARKET_INPUT, list.length, param, relCoinCode);
 		Logger.info("Market data successfully loaded");
 	}
 	
 	//helper method, assigns all coin data from start to end in the coin list
-	private static void setCoinData(int start, int end, String param, String relCoinCode) throws APINotRespondingException {
-		JsonObject rawObj = APIHandler.request(CallType.PRICE_MULTI_FULL, "fsyms", param, "tsyms", relCoinCode).get("RAW").getAsJsonObject();
-		Set<Entry<String, JsonElement>> dataMap = rawObj.entrySet();
+	private static void setCoinMarketData(int start, int end, String param, String relCoinCode) throws APINotRespondingException {
+		//get root object from API
+		JsonObject rootObj = APIHandler.request(CallType.PRICE_MULTI_FULL, "fsyms", param, "tsyms", relCoinCode);
+	
+		JsonObject rawObj = rootObj.get("RAW").getAsJsonObject(); //for raw data
+		JsonObject dispObj = rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
 		
 		JsonObject currCoinObj;
-		Iterator<Entry<String, JsonElement>> iterator = dataMap.iterator();
-		Entry<String, JsonElement> currEntry = iterator.next();
+		Iterator<Entry<String, JsonElement>> iterRaw = rawObj.entrySet().iterator();
+		Iterator<Entry<String, JsonElement>> iterDisp = dispObj.entrySet().iterator();
+		
+		Entry<String, JsonElement> currRaw = iterRaw.next();
+		Entry<String, JsonElement> currDisp = iterDisp.next();
 				
 		for(int i = start; i < end - 1; i++) {
-			if(list[i].getCode().equals(currEntry.getKey())) {
-				currCoinObj = currEntry.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
+			if(list[i].getCode().equals(currRaw.getKey())) {
+				
+				//set raw data
+				currCoinObj = currRaw.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
 				
 				list[i].setMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsDouble());
 				list[i].setPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsDouble());
@@ -117,12 +127,23 @@ public class CoinList{
 					list[i].setDailyChangePercent(Double.NaN);
 				else
 					list[i].setDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsDouble());
+				
+				
+				//set disp data 
+				currCoinObj = currDisp.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
 
-				if(iterator.hasNext())
-					currEntry = iterator.next();
+				list[i].setDisplayMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsString());
+				list[i].setDisplayPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsString());
+				list[i].setDisplayDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsString());
+
+				if(iterRaw.hasNext()) {
+					currRaw = iterRaw.next();
+					currDisp = iterDisp.next();
+				}
 			} else {
 				list[i].setMarketCap(Double.NaN);
 				list[i].setPrice(Double.NaN);
+				list[i].setDailyChangePercent(Double.NaN);
 			}
 		}
 	}

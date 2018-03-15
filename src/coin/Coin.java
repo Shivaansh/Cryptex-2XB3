@@ -23,11 +23,17 @@ public class Coin{
 	
 	private String name; 
 	private String code; 
-	
 	private double totalSupply; 
+	
+	//raw data
 	private double mktCap;
 	private double price;
 	private double dailyChangePercent; 
+	
+	//display data 
+	private String mktCapDisp; 
+	private String priceDisp;
+	private String dailyChangePercentDisp;
 	
 	private final String NAME_TAG = "CoinName";
 	private final String CODE_TAG = "Name";
@@ -114,12 +120,61 @@ public class Coin{
 	}
 	
 	/**
+	 * Sets the formatted Daily Change Percent (formatted with % symbol)
+	 * @param c formatted daily change percent
+	 */
+	public void setDisplayDailyChangePercent(String c) {
+		dailyChangePercentDisp = c;
+	}
+	
+	/**
+	 * Gets the formatted daily change percent (formatted with % symbol)
+	 * @return the formated daily change percent as a string
+	 */
+	public String getDisplayDailyChangePercent() {
+		return dailyChangePercentDisp;
+	}
+	
+	/**
+	 * Sets the formatted market cap (formatted with coin symbol)
+	 * @param c daily change percent string to set
+	 */
+	public void setDisplayMarketCap(String c) {
+		mktCapDisp = c;
+	}
+	
+	/**
+	 * Gets the formatted market cap (formatted with coin symbol)
+	 * @return the formatted market cap string
+	 */
+	public String getDisplayMarketCap() {
+		return mktCapDisp;
+	}
+	
+	/**
+	 * Gets the formatted price (formatted with coin symbol)
+	 * @return formatted price string
+	 */
+	public String getDisplayPrice() {
+		return priceDisp;
+	}
+	
+	/**
+	 * Set the formatted price (formatted with coin symbol)
+	 * @param c display price string 
+	 */
+	public void setDisplayPrice(String c) {
+		priceDisp = c;
+	}
+	
+	/**
 	 * Gets the coins daily historical data in the date range specified. Dates must be less than 2000 days apart
 	 * @param relCoinCode base currency to use for coin value 
 	 * @param fromDate date from, format is "dd/MM/YYYY"
 	 * @param toDate date to, format is "dd/MM/YYY"
 	 * @return array including all coin prices from fromDate to toDate
 	 * @throws APINotRespondingException if API does not responds or responds with an error
+	 * @throws IllegalArgumentException if DateTo is before DateFrom or more than 2000 days apart
 	 */
 	public double[] getDailyHistorical(String relCoinCode, String fromDate, String toDate) throws APINotRespondingException {
 	    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");

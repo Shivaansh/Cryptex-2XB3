@@ -8,6 +8,10 @@ import java.util.Set;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import coin.comparator.DailyChangeComparator;
+import coin.comparator.MarketCapComparator;
+import coin.comparator.NameComparator;
+import coin.comparator.PriceComparator;
 import util.APIHandler;
 import util.Logger;
 import util.APIHandler.CallType;

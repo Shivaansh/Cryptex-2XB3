@@ -1,6 +1,8 @@
-package coin;
+package coin.comparator;
 
 import java.util.Comparator;
+
+import coin.Coin;
 
 /**
  * Comparator to compare daily change percent

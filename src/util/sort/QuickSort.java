@@ -1,10 +1,16 @@
 package util.sort;
 
 import java.util.Comparator;
-
 import coin.Coin;
 
-public class QuickSort implements Comparator<Coin>{
+/**
+ * Uses QuickSort to sort the list of coins on the basis of a selected criteria using the Comparator<> implementation
+ * @author Shivaansh Prasann
+ *
+ */
+public class QuickSort{
+	
+	private static Comparator<Coin> c;
 	
 	/**
 	 * Will sort the given coin list using the Comparator c
@@ -12,10 +18,11 @@ public class QuickSort implements Comparator<Coin>{
 	 * @param c comparator object to use to compare coins
 	 */
 	public static void sort(Coin[] list, Comparator<Coin> c) {
+		QuickSort.c = c;
 		sort(list, 0, list.length-1);
 	}
 	
-	//add private helper / sorting methods here
+	//add private helper / sorting methods here - Shivaansh
 	//Reference: https://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/Quick.java.html
 
 	/**
@@ -35,16 +42,16 @@ public class QuickSort implements Comparator<Coin>{
     private static int partition(Coin[] a, int lo, int hi) {
         int i = lo;
         int j = hi + 1;
-       int v = (int) a[lo].getPrice();
+        //int v = (int) a[lo].getPrice();
         while (true) { 
 
             // find item on lo to swap
-            while (less1(a[++i].getPrice(), a[v].getPrice())) {
+            while (c.compare(a[++i], a[lo]) < 0) {
                 if (i == hi) break;
             }
 
             // find item on hi to swap
-            while (less1(a[v].getPrice(), a[--j].getPrice())) {
+            while (c.compare(a[lo], a[--j]) < 0) {
                 if (j == lo) break;      // redundant since a[lo] acts as sentinel
             }
 
@@ -62,16 +69,6 @@ public class QuickSort implements Comparator<Coin>{
     }
 
 	/**
-	 * Used to check if one value is less than another
-	 * @param d the first value
-	 * @param e the second value
-	 */
-	private static boolean less1(double d, double e) {
-        if (d == e) return false;   
-        return  (d - e) < 0;
-    }
-        	
-	/**
 	 * Used to exchange two values in an array
 	 * @param ob the array in which the swap takes place
 	 * @param i the first value
@@ -83,10 +80,5 @@ public class QuickSort implements Comparator<Coin>{
         ob[j] = exch;
     }
 
-	@Override
-	public int compare(Coin o1, Coin o2) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 	
 }

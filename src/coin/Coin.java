@@ -24,6 +24,7 @@ public class Coin{
 	private String name; 
 	private String code; 
 	private double totalSupply; 
+	private int internalOrder;
 	
 	//raw data
 	private double mktCap;
@@ -35,20 +36,17 @@ public class Coin{
 	private String priceDisp;
 	private String dailyChangePercentDisp;
 	
-	private final String NAME_TAG = "CoinName";
-	private final String CODE_TAG = "Name";
-	private final String SUPLLY_TAG = "TotalCoinSupply";
-	
 	/**
 	 * Constructor - creates Coin from JSON Object
 	 * @param jsonObject JSONObject which populates the fields in the coin object
 	 */
 	public Coin(JsonObject jsonObject) {
-		name = jsonObject.get(NAME_TAG).getAsString();
-		code = jsonObject.get(CODE_TAG).getAsString();
+		name = jsonObject.get("CoinName").getAsString();
+		code = jsonObject.get("Name").getAsString();
+		internalOrder = jsonObject.get("SortOrder").getAsInt();
 		
 		//totalSupply not always consistently formatted in API
-		String totalSupplyStr = jsonObject.get(SUPLLY_TAG).toString().replace(",","").replace(" ", "");
+		String totalSupplyStr = jsonObject.get("TotalCoinSupply").toString().replace(",","").replace(" ", "");
 		try {
 			totalSupply = Double.parseDouble(totalSupplyStr);
 		}catch(NumberFormatException e){
@@ -164,6 +162,14 @@ public class Coin{
 	 */
 	public void setDisplayPrice(String c) {
 		priceDisp = c;
+	}
+	
+	/**
+	 * Returns the interal sort order used by the api
+	 * @return sort order integer
+	 */
+	public int getInternalSortOrder() {
+		return this.internalOrder;
 	}
 	
 	/**

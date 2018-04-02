@@ -142,7 +142,7 @@ public class CoinMainController implements Initializable{
         //tableView.scrollTo(100);
        
         //Add to table
-        tableView.setItems(coin);
+        //tableView.setItems(coin);
         table2 = tableView;
         doubleClickedRow();
     }

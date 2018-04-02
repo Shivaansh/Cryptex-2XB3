@@ -36,6 +36,8 @@ public class CoinList{
 	private static boolean isInit = false; 
 	private static int loadedTill = 0;
 	
+	private static boolean allLoaded = false; 
+	
 	/**
 	 * Initializes the coin list by making an API call
 	 * @throws APINotRespondingException if API does not respond or responds with an error
@@ -66,8 +68,24 @@ public class CoinList{
 	 * Checks whether the coin list has been successfully initialized
 	 * @return if coin list was successfully created 
 	 */
-	public boolean isInitialized() {
+	public static boolean isInitialized() {
 		return isInit;
+	}
+	
+	/**
+	 * Whether the entire list has been initialized with the market data
+	 * @return if list is all market data is initialized
+	 */
+	public static boolean marketDataFullyLoaded() {
+		return allLoaded;
+	}
+	
+	/**
+	 * Resets market data, so it can be loaded again
+	 */
+	public static void resetMarketData() {
+		loadedTill = 0; 
+		allLoaded = false;
 	}
 	
 	/**
@@ -119,6 +137,11 @@ public class CoinList{
 		if(!isInit)
 			throw new IllegalStateException("CoinList must be initialized!");
 		
+		if(loadedTill + i > list.length - 1) {
+			i = list.length - loadedTill;
+			allLoaded = true;
+		}
+		
 		String param = "";
 		LinkedList<Integer> digitCoins = new LinkedList<>();
 		
@@ -133,7 +156,8 @@ public class CoinList{
 		setCoinMarketData(loadedTill, loadedTill + i + 1, param, relCoinCode);
 		
 		//sets coins that start with a digit - they are in a different order
-		setCoinMarketData(digitCoins, relCoinCode);
+		if(digitCoins.size() > 0)
+			setCoinMarketData(digitCoins, relCoinCode);
 		
 		loadedTill += i;
 	}
@@ -147,9 +171,25 @@ public class CoinList{
 		
 		//get root object from API
 		JsonObject rootObj = APIHandler.request(CallType.PRICE_MULTI_FULL, "fsyms", param, "tsyms", relCoinCode);
-	
-		JsonObject rawObj = rootObj.get("RAW").getAsJsonObject(); //for raw data
-		JsonObject dispObj = rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
+		
+		JsonObject rawObj = null;
+		JsonObject dispObj = null;
+		
+		try {
+			rawObj = rootObj.get("RAW").getAsJsonObject(); //for raw data
+			dispObj = rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
+		}catch(NullPointerException e) {
+			for(int c : coins) {
+				list[c].setMarketCap(Double.NaN);
+				list[c].setPrice(Double.NaN);
+				list[c].setDailyChangePercent(Double.NaN);
+				
+				list[c].setDisplayDailyChangePercent("-");
+				list[c].setDisplayMarketCap("-");
+				list[c].setDisplayPrice("-");
+			}
+			return;
+		}
 		
 		JsonObject currCoinObj;
 		Iterator<Entry<String, JsonElement>> iterRaw = rawObj.entrySet().iterator();
@@ -158,7 +198,7 @@ public class CoinList{
 		Entry<String, JsonElement> currRaw = iterRaw.next();
 		Entry<String, JsonElement> currDisp = iterDisp.next();
 		
-		while(iterRaw.hasNext() && iterDisp.hasNext()) {
+		while(currRaw != null) {
 			Coin c = getCoin(currRaw.getKey());
 			
 			//set raw data
@@ -178,6 +218,13 @@ public class CoinList{
 			c.setDisplayMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsString());
 			c.setDisplayPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsString());
 			c.setDisplayDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsString() + "%");
+
+			if(iterRaw.hasNext()) {
+				currRaw = iterRaw.next();
+				currDisp = iterDisp.next();
+			}else {
+				currRaw = null;
+			}
 		}	
 		
 	}
@@ -198,14 +245,6 @@ public class CoinList{
 		Entry<String, JsonElement> currDisp = iterDisp.next();
 				
 		for(int i = start; i < end - 1; i++) {
-			if(Character.isDigit(currRaw.getKey().charAt(0))) {
-				if(iterRaw.hasNext()) {
-					currRaw = iterRaw.next();
-					currDisp = iterDisp.next();
-				}
-				i--;
-				continue; 
-			}
 			if(list[i].getCode().equals(currRaw.getKey())) {
 				
 				//set raw data

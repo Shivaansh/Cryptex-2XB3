@@ -9,6 +9,8 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +23,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import util.APINotRespondingException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -166,7 +170,8 @@ public class CoinMainController implements Initializable{
         transition = new HamburgerBasicCloseTransition(hamburger);
         transition.setRate(-1);
         name.setText(getName());
-
+        
+        startLoad();
     }
 
     private String getName(){
@@ -220,5 +225,27 @@ public class CoinMainController implements Initializable{
 
     @FXML public void searchEntered(ActionEvent e){
         infoPane.toFront();
+    }
+    
+    private void startLoad() {
+    	Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				runLoad();
+			}
+		};
+		
+		Thread loadThread = new Thread(runnable);
+		loadThread.setDaemon(true);
+		loadThread.start();
+    }
+    
+    private void runLoad() {
+    	try {
+    		while(!CoinList.marketDataFullyLoaded())
+    			CoinList.loadNextMarketData(60, "USD");
+		} catch (APINotRespondingException e) {
+			e.printStackTrace();
+		}
     }
 }

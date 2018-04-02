@@ -130,7 +130,7 @@ public class CoinList{
 		}
 		
 		//sets most coins
-		setCoinMarketData(loadedTill, loadedTill + i, param, relCoinCode);
+		setCoinMarketData(loadedTill, loadedTill + i + 1, param, relCoinCode);
 		
 		//sets coins that start with a digit - they are in a different order
 		setCoinMarketData(digitCoins, relCoinCode);

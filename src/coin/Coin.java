@@ -22,9 +22,11 @@ import util.APINotRespondingException;
 public class Coin{
 	
 	private String name; 
-	private String code; 
+	private String code;
+	
 	private double totalSupply; 
 	private int internalOrder;
+	private int id; 
 	
 	//raw data
 	private double mktCap;
@@ -44,6 +46,7 @@ public class Coin{
 		name = jsonObject.get("CoinName").getAsString();
 		code = jsonObject.get("Name").getAsString();
 		internalOrder = jsonObject.get("SortOrder").getAsInt();
+		id = jsonObject.get("Id").getAsInt();
 		
 		//totalSupply not always consistently formatted in API
 		String totalSupplyStr = jsonObject.get("TotalCoinSupply").toString().replace(",","").replace(" ", "");
@@ -172,6 +175,26 @@ public class Coin{
 		return this.internalOrder;
 	}
 	
+	/**
+	 * Returns the coin's image path, relative to the API 
+	 * @return image path
+	 */
+	public String getImagePath() throws APINotRespondingException {
+		JsonObject obj = APIHandler.request(CallType.SNAP_SHOT_FULL, "id", String.valueOf(this.id)).getAsJsonObject("Data");
+		return obj.getAsJsonObject("SEO").getAsJsonPrimitive("OgImageUrl").getAsString();
+	}
+	
+	/**
+	 * Gets the formatted coins volume in the last 24h relative to the currency relCoinCode
+	 * @param relCoinCode currency to return result in 
+	 * @return formatted string containing coins 24h volume
+	 * @throws APINotRespondingException if API does not respond or responds with an error
+	 */
+	public String getDisplayVolume24H(String relCoinCode) throws APINotRespondingException{
+		JsonObject obj = APIHandler.request(CallType.PRICE_MULTI_FULL, "fsyms", this.code, "tsyms", relCoinCode);
+		return obj.getAsJsonObject("DISPLAY").getAsJsonObject(this.code).getAsJsonObject(relCoinCode).getAsJsonPrimitive("VOLUME24HOURTO").getAsString();
+	}
+		
 	/**
 	 * Gets the coins daily historical data in the date range specified. Dates must be less than 2000 days apart
 	 * @param relCoinCode base currency to use for coin value 

@@ -5,7 +5,7 @@ import java.util.Comparator;
 import coin.Coin;
 
 /**
- * Comparator to compare daily change percent
+ * Comparator to compare internal order
  * @author Somar Aani
  *
  */

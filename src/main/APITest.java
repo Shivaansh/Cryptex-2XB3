@@ -9,7 +9,11 @@ public class APITest {
 	public static void main(String args[]) {
 		try {
 			CoinList.init();
-			CoinList.loadAllMarketData("USD");
+			CoinList.loadNextMarketData(60, "USD");
+			
+			for(Coin c : CoinList.getList()) {
+				System.out.println(c.getName() + ", " + c.getMarketCap());
+			}
 			
 			
 		/*	double[] d = CoinList.getCoin("BTC").getDailyHistorical("USD", "10/02/2017", "09/03/2017");

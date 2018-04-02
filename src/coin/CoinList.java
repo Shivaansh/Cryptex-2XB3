@@ -1,5 +1,6 @@
 package coin;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -9,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import coin.comparator.DailyChangeComparator;
+import coin.comparator.InternalOrderComparator;
 import coin.comparator.MarketCapComparator;
 import coin.comparator.NameComparator;
 import coin.comparator.PriceComparator;
@@ -30,7 +32,9 @@ public class CoinList{
 	
 	private static boolean isInit = false; 
 	
-	private static final int MAX_MARKET_INPUT = 60;
+	public static final int MAX_MARKET_INPUT = 60;
+	
+	private static int loadedTill = 0;
 	
 	/**
 	 * Initializes the coin list by making an API call
@@ -53,6 +57,9 @@ public class CoinList{
 		
 		isInit = true;
 		Logger.info("Coin list successfully initialized - " + list.length + " coins");
+		
+		//REPLACE THIS WITH OUT SORTING METHOD----------------------------------------------------------------------
+		Arrays.sort(list, new InternalOrderComparator());
 	}
 	
 	/**
@@ -102,6 +109,26 @@ public class CoinList{
 		Logger.info("Market data successfully loaded");
 	}
 	
+	/**
+	 * Loads the next {@code i} coin market data
+	 * @param i number of coins to load
+	 * @param relCoinCode coin to load market relative to 
+	 * @throws APINotRespondingException if API does not respond or responds with an error
+	 */
+	public static void loadNextMarketData(int i, String relCoinCode) throws APINotRespondingException {
+		if(!isInit)
+			throw new IllegalStateException("CoinList must be initialized!");
+		
+		String param = "";
+		
+		for(int j = loadedTill; j < loadedTill + i; j++){
+			param += list[j].getCode() + ",";
+		}
+		
+		setCoinMarketData(loadedTill, loadedTill + i, param, relCoinCode);
+		loadedTill += i;
+	}
+	
 	//helper method, assigns all coin data from start to end in the coin list
 	private static void setCoinMarketData(int start, int end, String param, String relCoinCode) throws APINotRespondingException {
 		//get root object from API
@@ -118,6 +145,14 @@ public class CoinList{
 		Entry<String, JsonElement> currDisp = iterDisp.next();
 				
 		for(int i = start; i < end - 1; i++) {
+			if(Character.isDigit(currRaw.getKey().charAt(0))) {
+				if(iterRaw.hasNext()) {
+					currRaw = iterRaw.next();
+					currDisp = iterDisp.next();
+				}
+				i--;
+				continue; 
+			}
 			if(list[i].getCode().equals(currRaw.getKey())) {
 				
 				//set raw data

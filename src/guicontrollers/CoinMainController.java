@@ -2,6 +2,8 @@ package guicontrollers;
 
 import coin.Coin;
 import coin.CoinList;
+
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerBasicCloseTransition;
 import javafx.animation.KeyFrame;
@@ -38,7 +40,7 @@ public class CoinMainController implements Initializable{
     @FXML private AnchorPane drawer;
     @FXML private Label name;
     @FXML private AnchorPane menuOpen;
-    @FXML private TableColumn<Coin, Integer> numCol;
+    @FXML private TableColumn<Integer, Coin> numCol;
     @FXML private TableColumn<Coin, ImageView> imageCol;
     @FXML private TableColumn<Coin, String> nameCol;
     @FXML private TableColumn<Coin, String> priceCol;
@@ -47,6 +49,9 @@ public class CoinMainController implements Initializable{
     @FXML private TableView<Coin> tableView;
     @FXML private AnchorPane infoPane;
     @FXML private Pagination coinPage;
+    @FXML private JFXButton refreshButton;
+    @FXML private MenuButton sortButton;
+    
     private static TableView<Coin> table2;
 
     private HamburgerBasicCloseTransition transition;
@@ -248,4 +253,8 @@ public class CoinMainController implements Initializable{
 			e.printStackTrace();
 		}
     }
+    
+    @FXML public void refreshClicked(){}
+    
+    @FXML public void sortClicked(){}
 }

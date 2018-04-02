@@ -7,5 +7,5 @@ package coin;
  *
  */
 public enum SortOrder {
-	ALPHABETICAL, MKTCAP, PRICE, CHANGE
+	ALPHABETICAL, MKTCAP, PRICE, CHANGE, INTERNAL_ID, NOT_SORTED 
 }

@@ -1,6 +1,5 @@
 package coin;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,12 +30,15 @@ public class CoinList{
 	/** Max number of coins that can be initialized with a single API call **/
 	public static final int MAX_MARKET_INPUT = 60;
 	
-	private static Coin[] list; 
-	private static SortOrder sortOrder = SortOrder.PRICE;
-	private static boolean isInit = false; 
-	private static int loadedTill = 0;
+	private static SortOrder sortOrder = SortOrder.NOT_SORTED; //sort order currently used
 	
-	private static boolean allLoaded = false; 
+	private static Coin[] list; //stores the actual coinlist
+	
+	private static boolean isInit = false; //if coinlist is initialized (coin objects with names and code)
+	private static boolean allMarketLoaded = false; //if all coins added to market data
+
+	private static int marketLoadedTill = 0; //number of coins that have loaded market data
+	
 	
 	/**
 	 * Initializes the coin list by making an API call
@@ -60,8 +62,8 @@ public class CoinList{
 		isInit = true;
 		Logger.info("Coin list successfully initialized - " + list.length + " coins");
 		
-		//REPLACE THIS WITH OUT SORTING METHOD----------------------------------------------------------------------
 		QuickSort.sort(list, new InternalOrderComparator());
+		sortOrder = SortOrder.INTERNAL_ID;
 	}
 	
 	/**
@@ -77,15 +79,15 @@ public class CoinList{
 	 * @return if list is all market data is initialized
 	 */
 	public static boolean marketDataFullyLoaded() {
-		return allLoaded;
+		return allMarketLoaded;
 	}
 	
 	/**
 	 * Resets market data, so it can be loaded again
 	 */
 	public static void resetMarketData() {
-		loadedTill = 0; 
-		allLoaded = false;
+		marketLoadedTill = 0; 
+		allMarketLoaded = false;
 	}
 	
 	/**
@@ -137,15 +139,15 @@ public class CoinList{
 		if(!isInit)
 			throw new IllegalStateException("CoinList must be initialized!");
 		
-		if(loadedTill + i > list.length - 1) {
-			i = list.length - loadedTill;
-			allLoaded = true;
+		if(marketLoadedTill + i > list.length - 1) {
+			i = list.length - marketLoadedTill;
+			allMarketLoaded = true;
 		}
 		
 		String param = "";
 		LinkedList<Integer> digitCoins = new LinkedList<>();
 		
-		for(int j = loadedTill; j < loadedTill + i; j++){
+		for(int j = marketLoadedTill; j < marketLoadedTill + i; j++){
 			if(Character.isDigit(list[j].getCode().charAt(0))) {
 				digitCoins.add(j);
 			}else
@@ -153,13 +155,13 @@ public class CoinList{
 		}
 		
 		//sets most coins
-		setCoinMarketData(loadedTill, loadedTill + i + 1, param, relCoinCode);
+		setCoinMarketData(marketLoadedTill, marketLoadedTill + i + 1, param, relCoinCode);
 		
 		//sets coins that start with a digit - they are in a different order
 		if(digitCoins.size() > 0)
 			setCoinMarketData(digitCoins, relCoinCode);
 		
-		loadedTill += i;
+		marketLoadedTill += i;
 	}
 	
 	//helper method, sets coin market data for specific coins in coins array
@@ -348,6 +350,9 @@ public class CoinList{
 	 * @param s SortOrder enum to specify how to sort
 	 */
 	public static void sort(SortOrder s) {
+		if(s == SortOrder.NOT_SORTED) return;
+		
 		QuickSort.sort(list, getComparator(s));
+		sortOrder = s;
 	}
 }

@@ -9,7 +9,7 @@ public class APITest {
 	public static void main(String args[]) {
 		try {
 			CoinList.init();
-			CoinList.loadNextMarketData(60, "USD");
+			CoinList.loadNextMarketData(CoinList.MAX_MARKET_INPUT, "USD");
 			
 			for(Coin c : CoinList.getList()) {
 				System.out.println(c.getName() + ", " + c.getMarketCap());

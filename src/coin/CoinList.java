@@ -172,7 +172,7 @@ public class CoinList{
 
 				list[i].setDisplayMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsString());
 				list[i].setDisplayPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsString());
-				list[i].setDisplayDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsString());
+				list[i].setDisplayDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsString() + "%");
 
 				if(iterRaw.hasNext()) {
 					currRaw = iterRaw.next();

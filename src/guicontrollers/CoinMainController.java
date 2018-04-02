@@ -2,11 +2,13 @@ package guicontrollers;
 
 import coin.Coin;
 import coin.CoinList;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerBasicCloseTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,9 +26,7 @@ import javafx.util.Duration;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.Scanner;
+import java.util.*;
 
 public class CoinMainController implements Initializable{
     @FXML private AnchorPane top;
@@ -34,7 +34,7 @@ public class CoinMainController implements Initializable{
     @FXML private AnchorPane drawer;
     @FXML private Label name;
     @FXML private AnchorPane menuOpen;
-    @FXML private TableColumn<Coin, Integer> numCol;
+    @FXML private TableColumn<Integer, Coin> numCol;
     @FXML private TableColumn<Coin, ImageView> imageCol;
     @FXML private TableColumn<Coin, String> nameCol;
     @FXML private TableColumn<Coin, String> priceCol;
@@ -43,6 +43,8 @@ public class CoinMainController implements Initializable{
     @FXML private TableView<Coin> tableView;
     @FXML private AnchorPane infoPane;
     @FXML private Pagination coinPage;
+    @FXML private JFXButton refreshButton;
+    @FXML private MenuButton sortButton;
     private static TableView<Coin> table2;
 
     private HamburgerBasicCloseTransition transition;
@@ -221,4 +223,8 @@ public class CoinMainController implements Initializable{
     @FXML public void searchEntered(ActionEvent e){
         infoPane.toFront();
     }
+
+    @FXML public void refreshClicked(){}
+
+    @FXML public void sortClicked(){}
 }

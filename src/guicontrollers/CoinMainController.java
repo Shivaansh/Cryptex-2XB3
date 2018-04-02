@@ -1,6 +1,7 @@
 package guicontrollers;
 
 import coin.Coin;
+import coin.CoinList;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerBasicCloseTransition;
 import javafx.animation.KeyFrame;
@@ -8,6 +9,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -18,7 +20,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Duration;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -40,10 +41,12 @@ public class CoinMainController implements Initializable{
     @FXML private TableColumn changeCol;
     @FXML private TableView<Coin> tableView;
     @FXML private AnchorPane infoPane;
+    @FXML private Pagination coinPage;
     private static TableView<Coin> table2;
 
     private HamburgerBasicCloseTransition transition;
     private int start = 0;
+    private int pageNum = 1;
     private static ObservableList<Coin> coin = FXCollections.observableArrayList();
 
     @FXML
@@ -91,20 +94,21 @@ public class CoinMainController implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        coinPage.setPageCount((int)Math.ceil((double)CoinList.getList().length/CoinList.MAX_MARKET_INPUT));
         coin = getCoin();
         transition = new HamburgerBasicCloseTransition(hamburger);
         transition.setRate(-1);
         name.setText(getName());
-        priceCol.prefWidthProperty().bind(tableView.widthProperty().subtract(125).divide(4));
-        nameCol.prefWidthProperty().bind(tableView.widthProperty().subtract(125).divide(4));
-        capCol.prefWidthProperty().bind(tableView.widthProperty().subtract(125).divide(4));
-        changeCol.prefWidthProperty().bind(tableView.widthProperty().subtract(125).divide(4));
+        priceCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
+        nameCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
+        capCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
+        changeCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
         
-        /*nameCol.setReorderable(false);
+        nameCol.setReorderable(false);
         priceCol.setReorderable(false);
         imageCol.setReorderable(false);
         numCol.setReorderable(false);
-        capCol.setReorderable(false);*/
+        capCol.setReorderable(false);
         
         //numCol.setCellValueFactory(new PropertyValueFactory<Coin, Integer>("number"));
         //imageCol.setCellValueFactory(new PropertyValueFactory<Coin, ImageView>("logo"));
@@ -186,5 +190,13 @@ public class CoinMainController implements Initializable{
 
     @FXML public void closeInfo(){
         infoPane.toBack();
+    }
+
+    @FXML public void searchClicked(){
+        infoPane.toFront();
+    }
+
+    @FXML public void searchEntered(ActionEvent e){
+        infoPane.toFront();
     }
 }

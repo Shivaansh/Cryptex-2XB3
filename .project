@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>cas.XB3.cryptex</name>
-	<comment></comment>
-	<projects>
-	</projects>
+	<name>Cryptex</name>
+	<comment/>
+	<projects/>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments>
-			</arguments>
+			<arguments/>
 		</buildCommand>
 	</buildSpec>
 	<natures>

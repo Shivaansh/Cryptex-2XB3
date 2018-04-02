@@ -204,7 +204,7 @@ public class Coin{
 	    	throw new IllegalArgumentException("DateTo must come after DateFrom");
 	    	
 	    if(limit > 2000)
-	    	throw new IllegalArgumentException("Dates cannot be more than 2000 dates apart");
+	    	throw new IllegalArgumentException("Dates cannot be more than 2000 days apart");
 	    
 
 		JsonArray dataArray = APIHandler.request(CallType.HISTO_DAY, "fsym", this.code, "tsym", relCoinCode, "toT", String.valueOf(toTs), "limit", String.valueOf(limit)).getAsJsonArray("Data");

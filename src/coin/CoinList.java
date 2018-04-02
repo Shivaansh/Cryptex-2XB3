@@ -3,6 +3,7 @@ package coin;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -27,12 +28,13 @@ import util.APINotRespondingException;
 
 public class CoinList{
 	
+	/** Max number of coins that can be initialized with a single API call **/
+	public static final int MAX_MARKET_INPUT = 60;
+	
 	private static Coin[] list; 
 	private static SortOrder sortOrder = SortOrder.PRICE;
 	
 	private static boolean isInit = false; 
-	
-	public static final int MAX_MARKET_INPUT = 60;
 	
 	private static int loadedTill = 0;
 	
@@ -120,13 +122,66 @@ public class CoinList{
 			throw new IllegalStateException("CoinList must be initialized!");
 		
 		String param = "";
+		LinkedList<Integer> digitCoins = new LinkedList();
 		
 		for(int j = loadedTill; j < loadedTill + i; j++){
-			param += list[j].getCode() + ",";
+			if(Character.isDigit(list[j].getCode().charAt(0))) {
+				digitCoins.add(j);
+			}else
+				param += list[j].getCode() + ",";
 		}
 		
+		//sets most coins
 		setCoinMarketData(loadedTill, loadedTill + i, param, relCoinCode);
+		
+		//sets coins that start with a digit - they are in a different order
+		setCoinMarketData(digitCoins, relCoinCode);
+		
 		loadedTill += i;
+	}
+	
+	//helper method, sets coin market data for specific coins in coins array
+	private static void setCoinMarketData(LinkedList<Integer> coins, String relCoinCode) throws APINotRespondingException {
+		String param = "";
+		for(int c : coins) {
+			param += list[c].getCode() + ",";
+		}
+		
+		//get root object from API
+		JsonObject rootObj = APIHandler.request(CallType.PRICE_MULTI_FULL, "fsyms", param, "tsyms", relCoinCode);
+	
+		JsonObject rawObj = rootObj.get("RAW").getAsJsonObject(); //for raw data
+		JsonObject dispObj = rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
+		
+		JsonObject currCoinObj;
+		Iterator<Entry<String, JsonElement>> iterRaw = rawObj.entrySet().iterator();
+		Iterator<Entry<String, JsonElement>> iterDisp = dispObj.entrySet().iterator();
+		
+		Entry<String, JsonElement> currRaw = iterRaw.next();
+		Entry<String, JsonElement> currDisp = iterDisp.next();
+		
+		while(iterRaw.hasNext() && iterDisp.hasNext()) {
+			Coin c = getCoin(currRaw.getKey());
+			
+			//set raw data
+			currCoinObj = currRaw.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
+
+			c.setMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsDouble());
+			c.setPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsDouble());
+			
+			if(currCoinObj.get("CHANGEPCT24HOUR").isJsonNull())
+				c.setDailyChangePercent(Double.NaN);
+			else
+				c.setDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsDouble());
+			
+			//set disp data 
+			currCoinObj = currDisp.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
+
+			c.setDisplayMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsString());
+			c.setDisplayPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsString());
+			c.setDisplayDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsString() + "%");
+		}	
+		
 	}
 	
 	//helper method, assigns all coin data from start to end in the coin list

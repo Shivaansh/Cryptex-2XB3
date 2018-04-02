@@ -95,7 +95,6 @@ public class CoinMainController implements Initializable{
 
     public TableView<Coin> createPage(int pageIndex){
         tableView.scrollTo(0);
-        System.out.println(pageIndex);
         priceCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
         nameCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
         capCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
@@ -139,7 +138,13 @@ public class CoinMainController implements Initializable{
         //tableView.scrollTo(100);
 
         //Add to table
-        tableView.setItems(FXCollections.observableArrayList(FXCollections.observableArrayList(CoinList.getList()).subList(0+(pageIndex*CoinList.MAX_MARKET_INPUT),(CoinList.MAX_MARKET_INPUT-1)+(pageIndex*CoinList.MAX_MARKET_INPUT))));
+        if((pageIndex+1) != (int)Math.ceil((double)CoinList.getList().length/CoinList.MAX_MARKET_INPUT)){
+            tableView.setItems(FXCollections.observableArrayList(FXCollections.observableArrayList(CoinList.getList()).subList(0+(pageIndex*CoinList.MAX_MARKET_INPUT),(CoinList.MAX_MARKET_INPUT-1)+(pageIndex*CoinList.MAX_MARKET_INPUT))));
+        }
+
+        else{
+            tableView.setItems(FXCollections.observableArrayList(FXCollections.observableArrayList(CoinList.getList()).subList(0+(pageIndex*CoinList.MAX_MARKET_INPUT),CoinList.getList().length)));
+        }
         doubleClickedRow();
         return tableView;
     }

@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
@@ -92,33 +93,29 @@ public class CoinMainController implements Initializable{
         transition.play();
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        coinPage.setPageCount((int)Math.ceil((double)CoinList.getList().length/CoinList.MAX_MARKET_INPUT));
-        coin = getCoin();
-        transition = new HamburgerBasicCloseTransition(hamburger);
-        transition.setRate(-1);
-        name.setText(getName());
+    public TableView<Coin> createPage(int pageIndex){
+        tableView.scrollTo(0);
+        System.out.println(pageIndex);
         priceCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
         nameCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
         capCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
         changeCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
-        
+
         nameCol.setReorderable(false);
         priceCol.setReorderable(false);
         imageCol.setReorderable(false);
         numCol.setReorderable(false);
         capCol.setReorderable(false);
-        
+
         //numCol.setCellValueFactory(new PropertyValueFactory<Coin, Integer>("number"));
         //imageCol.setCellValueFactory(new PropertyValueFactory<Coin, ImageView>("logo"));
         nameCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("name"));
         priceCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("displayPrice"));
         capCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("displayMarketCap"));
         changeCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("displayDailyChangePercent"));
-        
+
         //https://stackoverflow.com/questions/6998551/setting-font-color-of-javafx-tableview-cells
-       changeCol.setCellFactory(new Callback<TableColumn, TableCell>() {
+        changeCol.setCellFactory(new Callback<TableColumn, TableCell>() {
             public TableCell call(TableColumn param) {
                 return new TableCell<Coin, String>() {
                     @Override
@@ -138,13 +135,33 @@ public class CoinMainController implements Initializable{
                 };
             }
         });
-        
+
         //tableView.scrollTo(100);
-       
+
         //Add to table
-        //tableView.setItems(coin);
-        table2 = tableView;
+        tableView.setItems(FXCollections.observableArrayList(FXCollections.observableArrayList(CoinList.getList()).subList(0+(pageIndex*CoinList.MAX_MARKET_INPUT),(CoinList.MAX_MARKET_INPUT-1)+(pageIndex*CoinList.MAX_MARKET_INPUT))));
         doubleClickedRow();
+        return tableView;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        coinPage.setPageCount((int)Math.ceil((double)CoinList.getList().length/CoinList.MAX_MARKET_INPUT));
+        coinPage.setPageFactory(new Callback<Integer, Node>() {
+            @Override
+            public Node call(Integer pageIndex) {
+                if (pageIndex > (int)Math.ceil((double)CoinList.getList().length/CoinList.MAX_MARKET_INPUT)) {
+                    return null;
+                } else {
+                    return createPage(pageIndex);
+                }
+            }
+        });
+        coin = getCoin();
+        transition = new HamburgerBasicCloseTransition(hamburger);
+        transition.setRate(-1);
+        name.setText(getName());
+
     }
 
     private String getName(){

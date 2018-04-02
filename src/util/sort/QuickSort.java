@@ -39,12 +39,12 @@ public class QuickSort implements Comparator<Coin>{
         while (true) { 
 
             // find item on lo to swap
-            while (less1(a[++i], a[v])) {
+            while (less1(a[++i].getPrice(), a[v].getPrice())) {
                 if (i == hi) break;
             }
 
             // find item on hi to swap
-            while (less1(a[v], a[--j])) {
+            while (less1(a[v].getPrice(), a[--j].getPrice())) {
                 if (j == lo) break;      // redundant since a[lo] acts as sentinel
             }
 
@@ -63,12 +63,12 @@ public class QuickSort implements Comparator<Coin>{
 
 	/**
 	 * Used to check if one value is less than another
-	 * @param a the first value
-	 * @param b the second value
+	 * @param d the first value
+	 * @param e the second value
 	 */
-	private static boolean less1(Coin a, Coin b) {
-        if (a.getPrice() == b.getPrice()) return false;   
-        return ((int) (a.getPrice() - b.getPrice()) < 0);
+	private static boolean less1(double d, double e) {
+        if (d == e) return false;   
+        return  (d - e) < 0;
     }
         	
 	/**

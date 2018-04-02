@@ -37,16 +37,15 @@ public class QuickSort{
     private static int partition(Coin[] a, int lo, int hi) {
         int i = lo;
         int j = hi + 1;
-        int v = (int) a[lo].getPrice();
         while (true) { 
 
             // find item on lo to swap
-            while (c.compare(a[++i], a[v]) < 0) {
+            while (c.compare(a[++i], a[lo]) < 0) {
                 if (i == hi) break;
             }
 
             // find item on hi to swap
-            while (c.compare(a[v], a[--j]) < 0) {
+            while (c.compare(a[lo], a[--j]) < 0) {
                 if (j == lo) break;      // redundant since a[lo] acts as sentinel
             }
 

@@ -33,9 +33,7 @@ public class CoinList{
 	
 	private static Coin[] list; 
 	private static SortOrder sortOrder = SortOrder.PRICE;
-	
 	private static boolean isInit = false; 
-	
 	private static int loadedTill = 0;
 	
 	/**
@@ -61,8 +59,7 @@ public class CoinList{
 		Logger.info("Coin list successfully initialized - " + list.length + " coins");
 		
 		//REPLACE THIS WITH OUT SORTING METHOD----------------------------------------------------------------------
-		Arrays.sort(list, new InternalOrderComparator());
-		//QuickSort.sort(list, new InternalOrderComparator());
+		QuickSort.sort(list, new InternalOrderComparator());
 	}
 	
 	/**
@@ -123,7 +120,7 @@ public class CoinList{
 			throw new IllegalStateException("CoinList must be initialized!");
 		
 		String param = "";
-		LinkedList<Integer> digitCoins = new LinkedList();
+		LinkedList<Integer> digitCoins = new LinkedList<>();
 		
 		for(int j = loadedTill; j < loadedTill + i; j++){
 			if(Character.isDigit(list[j].getCode().charAt(0))) {
@@ -262,7 +259,6 @@ public class CoinList{
 				return list[i];
 		}
 		
-		//BinarySearch.
 		return null;
 	}
 	

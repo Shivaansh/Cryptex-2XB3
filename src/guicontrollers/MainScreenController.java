@@ -51,16 +51,16 @@ public class MainScreenController {
     private String state1 = "in";
 
     //File path for Login information
-    String infoPath = "src/LoginInfo/info.txt";
+    String infoPath = "info.txt";
 
     //LoginScreen.fxml path
-    String loginScreenPath = "/FXML/LoadingScreen.fxml";
+    String loginScreenPath = "/resources/fxml/LoadingScreen.fxml";
 
     //CoinMainScreen.fxl path
-    String coinMainPath = "/FXML/CoinMainScreen.fxml";
+    String coinMainPath = "/resources/images/CoinMainScreen.fxml";
 
     //CryptexIcon.png path
-    String iconPath = "Images/CryptexIcon.png";
+    String iconPath = "/resources/images/CryptexIcon.png";
 
     //Create info.txt file to store login information
     private File file = new File(infoPath);

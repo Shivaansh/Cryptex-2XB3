@@ -35,8 +35,8 @@ public class CoinMainController implements Initializable{
     @FXML private TableColumn<Coin, Integer> numCol;
     @FXML private TableColumn<Coin, ImageView> imageCol;
     @FXML private TableColumn<Coin, String> nameCol;
-    @FXML private TableColumn<Coin, Double> priceCol;
-    @FXML private TableColumn<Coin, Double> capCol;
+    @FXML private TableColumn<Coin, String> priceCol;
+    @FXML private TableColumn<Coin, String> capCol;
     @FXML private TableColumn changeCol;
     @FXML private TableView<Coin> tableView;
     @FXML private AnchorPane infoPane;
@@ -99,29 +99,30 @@ public class CoinMainController implements Initializable{
         nameCol.prefWidthProperty().bind(tableView.widthProperty().subtract(125).divide(4));
         capCol.prefWidthProperty().bind(tableView.widthProperty().subtract(125).divide(4));
         changeCol.prefWidthProperty().bind(tableView.widthProperty().subtract(125).divide(4));
-/*        nameCol.setReorderable(false);
+        
+        /*nameCol.setReorderable(false);
         priceCol.setReorderable(false);
         imageCol.setReorderable(false);
         numCol.setReorderable(false);
         capCol.setReorderable(false);*/
-        numCol.setCellValueFactory(new PropertyValueFactory<Coin, Integer>("number"));
-        imageCol.setCellValueFactory(new PropertyValueFactory<Coin, ImageView>("logo"));
+        
+        //numCol.setCellValueFactory(new PropertyValueFactory<Coin, Integer>("number"));
+        //imageCol.setCellValueFactory(new PropertyValueFactory<Coin, ImageView>("logo"));
         nameCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("name"));
-        priceCol.setCellValueFactory(new PropertyValueFactory<Coin, Double>("price"));
-        capCol.setCellValueFactory(new PropertyValueFactory<Coin, Double>("cap"));
-        changeCol.setCellValueFactory(new PropertyValueFactory<Coin, Double>("change"));
+        priceCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("displayPrice"));
+        capCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("displayMarketCap"));
+        changeCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("displayDailyChangePercent"));
+        
         //https://stackoverflow.com/questions/6998551/setting-font-color-of-javafx-tableview-cells
-        changeCol.setCellFactory(new Callback<TableColumn, TableCell>() {
+       changeCol.setCellFactory(new Callback<TableColumn, TableCell>() {
             public TableCell call(TableColumn param) {
                 return new TableCell<Coin, String>() {
-
                     @Override
                     public void updateItem(String item, boolean empty) {
                         double temp;
                         super.updateItem(item, empty);
-                        if (!isEmpty()) {
-                            temp = Double.parseDouble(item.substring(0,item.length()-1));
-                            if(temp < 0){
+                        if (item != null) {
+                            if(item.contains("-")){
                                 this.setTextFill(Color.RED);
                             }
                             else {
@@ -133,7 +134,9 @@ public class CoinMainController implements Initializable{
                 };
             }
         });
+        
         //tableView.scrollTo(100);
+       
         //Add to table
         tableView.setItems(coin);
         table2 = tableView;
@@ -144,7 +147,7 @@ public class CoinMainController implements Initializable{
         Scanner x = null;
         String[] nameFull;
         try {
-            x = new Scanner(new File("src/LoginInfo/info.txt"));
+            x = new Scanner(new File("info.txt"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

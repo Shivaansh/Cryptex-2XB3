@@ -143,6 +143,10 @@ public class CoinList{
 				list[i].setMarketCap(Double.NaN);
 				list[i].setPrice(Double.NaN);
 				list[i].setDailyChangePercent(Double.NaN);
+				
+				list[i].setDisplayDailyChangePercent("-");
+				list[i].setDisplayMarketCap("-");
+				list[i].setDisplayPrice("-");
 			}
 		}
 	}
@@ -163,7 +167,7 @@ public class CoinList{
 				return list[i];
 		}
 		
-		
+		//BinarySearch.
 		return null;
 	}
 	

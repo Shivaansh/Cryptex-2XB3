@@ -16,7 +16,7 @@
          <children>
             <ImageView fitHeight="130.0" fitWidth="304.0" layoutX="23.0" layoutY="144.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../resources/images/CryptexLogoWith.png" />
+                  <Image url="@../../resources/images/CryptexLogoWith.png" />
                </image>
             </ImageView>
          </children>

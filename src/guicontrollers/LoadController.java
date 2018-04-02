@@ -32,13 +32,13 @@ public class LoadController implements Initializable {
     @FXML private JFXProgressBar loadingBar;
     @FXML private Label loadInfo;
 
-    private Task task;
+    private Task<?> task;
 
     //CoinMainScreen.fxl path
-    private String coinMainPath = "resources/fxml/CoinMainScreen.fxml";
+    private String coinMainPath = "/resources/fxml/CoinMainScreen.fxml";
 
     //CryptexIcon.png path
-    private String iconPath = "resources/images/CryptexIcon.png";
+    private String iconPath = "/resources/images/CryptexIcon.png";
 
     private ObservableList<Coin> coinArray = FXCollections.observableArrayList();
 
@@ -91,8 +91,8 @@ public class LoadController implements Initializable {
      * 
      * @return
      */
-    public Task taskCreate(){
-        return new Task() {
+    public Task<?> taskCreate(){
+        return new Task<Object>() {
             @Override
             protected Object call() throws Exception {
                 /*for(int i=count; i<100+count; i++) {

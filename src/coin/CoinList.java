@@ -62,6 +62,7 @@ public class CoinList{
 		
 		//REPLACE THIS WITH OUT SORTING METHOD----------------------------------------------------------------------
 		Arrays.sort(list, new InternalOrderComparator());
+		//QuickSort.sort(list, new InternalOrderComparator());
 	}
 	
 	/**

@@ -1,8 +1,8 @@
 package coin;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -27,14 +27,18 @@ import util.APINotRespondingException;
 
 public class CoinList{
 	
-	private static Coin[] list; 
-	private static SortOrder sortOrder = SortOrder.PRICE;
-	
-	private static boolean isInit = false; 
-	
+	/** Max number of coins that can be initialized with a single API call **/
 	public static final int MAX_MARKET_INPUT = 60;
 	
-	private static int loadedTill = 0;
+	private static SortOrder sortOrder = SortOrder.NOT_SORTED; //sort order currently used
+	
+	private static Coin[] list; //stores the actual coinlist
+	
+	private static boolean isInit = false; //if coinlist is initialized (coin objects with names and code)
+	private static boolean allMarketLoaded = false; //if all coins added to market data
+
+	private static int marketLoadedTill = 0; //number of coins that have loaded market data
+	
 	
 	/**
 	 * Initializes the coin list by making an API call
@@ -58,16 +62,32 @@ public class CoinList{
 		isInit = true;
 		Logger.info("Coin list successfully initialized - " + list.length + " coins");
 		
-		//REPLACE THIS WITH OUT SORTING METHOD----------------------------------------------------------------------
-		Arrays.sort(list, new InternalOrderComparator());
+		QuickSort.sort(list, new InternalOrderComparator());
+		sortOrder = SortOrder.INTERNAL_ID;
 	}
 	
 	/**
 	 * Checks whether the coin list has been successfully initialized
 	 * @return if coin list was successfully created 
 	 */
-	public boolean isInitialized() {
+	public static boolean isInitialized() {
 		return isInit;
+	}
+	
+	/**
+	 * Whether the entire list has been initialized with the market data
+	 * @return if list is all market data is initialized
+	 */
+	public static boolean marketDataFullyLoaded() {
+		return allMarketLoaded;
+	}
+	
+	/**
+	 * Resets market data, so it can be loaded again
+	 */
+	public static void resetMarketData() {
+		marketLoadedTill = 0; 
+		allMarketLoaded = false;
 	}
 	
 	/**
@@ -119,14 +139,96 @@ public class CoinList{
 		if(!isInit)
 			throw new IllegalStateException("CoinList must be initialized!");
 		
-		String param = "";
-		
-		for(int j = loadedTill; j < loadedTill + i; j++){
-			param += list[j].getCode() + ",";
+		if(marketLoadedTill + i > list.length - 1) {
+			i = list.length - marketLoadedTill;
+			allMarketLoaded = true;
 		}
 		
-		setCoinMarketData(loadedTill, loadedTill + i, param, relCoinCode);
-		loadedTill += i;
+		String param = "";
+		LinkedList<Integer> digitCoins = new LinkedList<>();
+		
+		for(int j = marketLoadedTill; j < marketLoadedTill + i; j++){
+			if(Character.isDigit(list[j].getCode().charAt(0))) {
+				digitCoins.add(j);
+			}else
+				param += list[j].getCode() + ",";
+		}
+		
+		//sets most coins
+		setCoinMarketData(marketLoadedTill, marketLoadedTill + i + 1, param, relCoinCode);
+		
+		//sets coins that start with a digit - they are in a different order
+		if(digitCoins.size() > 0)
+			setCoinMarketData(digitCoins, relCoinCode);
+		
+		marketLoadedTill += i;
+	}
+	
+	//helper method, sets coin market data for specific coins in coins array
+	private static void setCoinMarketData(LinkedList<Integer> coins, String relCoinCode) throws APINotRespondingException {
+		String param = "";
+		for(int c : coins) {
+			param += list[c].getCode() + ",";
+		}
+		
+		//get root object from API
+		JsonObject rootObj = APIHandler.request(CallType.PRICE_MULTI_FULL, "fsyms", param, "tsyms", relCoinCode);
+		
+		JsonObject rawObj = null;
+		JsonObject dispObj = null;
+		
+		try {
+			rawObj = rootObj.get("RAW").getAsJsonObject(); //for raw data
+			dispObj = rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
+		}catch(NullPointerException e) {
+			for(int c : coins) {
+				list[c].setMarketCap(Double.NaN);
+				list[c].setPrice(Double.NaN);
+				list[c].setDailyChangePercent(Double.NaN);
+				
+				list[c].setDisplayDailyChangePercent("-");
+				list[c].setDisplayMarketCap("-");
+				list[c].setDisplayPrice("-");
+			}
+			return;
+		}
+		
+		JsonObject currCoinObj;
+		Iterator<Entry<String, JsonElement>> iterRaw = rawObj.entrySet().iterator();
+		Iterator<Entry<String, JsonElement>> iterDisp = dispObj.entrySet().iterator();
+		
+		Entry<String, JsonElement> currRaw = iterRaw.next();
+		Entry<String, JsonElement> currDisp = iterDisp.next();
+		
+		while(currRaw != null) {
+			Coin c = getCoin(currRaw.getKey());
+			
+			//set raw data
+			currCoinObj = currRaw.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
+
+			c.setMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsDouble());
+			c.setPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsDouble());
+			
+			if(currCoinObj.get("CHANGEPCT24HOUR").isJsonNull())
+				c.setDailyChangePercent(Double.NaN);
+			else
+				c.setDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsDouble());
+			
+			//set disp data 
+			currCoinObj = currDisp.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
+
+			c.setDisplayMarketCap(currCoinObj.getAsJsonPrimitive("MKTCAP").getAsString());
+			c.setDisplayPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsString());
+			c.setDisplayDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsString() + "%");
+
+			if(iterRaw.hasNext()) {
+				currRaw = iterRaw.next();
+				currDisp = iterDisp.next();
+			}else {
+				currRaw = null;
+			}
+		}	
+		
 	}
 	
 	//helper method, assigns all coin data from start to end in the coin list
@@ -145,14 +247,6 @@ public class CoinList{
 		Entry<String, JsonElement> currDisp = iterDisp.next();
 				
 		for(int i = start; i < end - 1; i++) {
-			if(Character.isDigit(currRaw.getKey().charAt(0))) {
-				if(iterRaw.hasNext()) {
-					currRaw = iterRaw.next();
-					currDisp = iterDisp.next();
-				}
-				i--;
-				continue; 
-			}
 			if(list[i].getCode().equals(currRaw.getKey())) {
 				
 				//set raw data
@@ -206,7 +300,6 @@ public class CoinList{
 				return list[i];
 		}
 		
-		//BinarySearch.
 		return null;
 	}
 	
@@ -257,6 +350,9 @@ public class CoinList{
 	 * @param s SortOrder enum to specify how to sort
 	 */
 	public static void sort(SortOrder s) {
+		if(s == SortOrder.NOT_SORTED) return;
+		
 		QuickSort.sort(list, getComparator(s));
+		sortOrder = s;
 	}
 }

@@ -20,6 +20,7 @@ public class BinarySearch {
 	 * @param c
 	 * @return
 	 */
+<<<<<<< HEAD
 	public static int search(String symbol, Coin[] list, Comparator<Coin> c) { //The "Search.java" has the proper search
 		int low = 0;
 //		int high = list.length;
@@ -40,6 +41,11 @@ public class BinarySearch {
 		return low; // index of insertion point
 	}
 	
+=======
+	public static int search(String symbol, Coin[] list, Comparator<Coin> c) {
+		return -1;
+	}
+>>>>>>> refs/remotes/origin/juwon
 	
 	public static void main(String[] args) {
 		try {

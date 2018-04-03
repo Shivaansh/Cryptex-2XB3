@@ -9,6 +9,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
@@ -38,7 +40,7 @@ public class CoinMainController implements Initializable{
     @FXML private AnchorPane drawer;
     @FXML private Label name;
     @FXML private AnchorPane menuOpen;
-    @FXML private TableColumn<Integer, Coin> numCol;
+    @FXML private TableColumn numCol;
     @FXML private TableColumn<Coin, ImageView> imageCol;
     @FXML private TableColumn<Coin, String> nameCol;
     @FXML private TableColumn<Coin, String> priceCol;
@@ -49,6 +51,7 @@ public class CoinMainController implements Initializable{
     @FXML private Pagination coinPage;
     @FXML private JFXButton refreshButton;
     @FXML private MenuButton sortButton;
+    @FXML private Label coinNameLabel;
 
     private static TableView<Coin> table2;
 
@@ -153,11 +156,58 @@ public class CoinMainController implements Initializable{
             tableView.setItems(FXCollections.observableArrayList(FXCollections.observableArrayList(CoinList.getList()).subList(0+(pageIndex*CoinList.MAX_MARKET_INPUT),CoinList.getList().length)));
         }
         doubleClickedRow();
+        numCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Coin, Coin>, ObservableValue<Coin>>() {
+            @Override public ObservableValue<Coin> call(TableColumn.CellDataFeatures<Coin, Coin> p) {
+                return new ReadOnlyObjectWrapper(p.getValue());
+            }
+        });
+
+        numCol.setCellFactory(new Callback<TableColumn<Coin, Coin>, TableCell<Coin, Coin>>() {
+            @Override public TableCell<Coin, Coin> call(TableColumn<Coin, Coin> param) {
+                return new TableCell<Coin, Coin>() {
+                    @Override protected void updateItem(Coin item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (this.getTableRow() != null && item != null) {
+                            setText(this.getTableRow().getIndex()+"");
+                        } else {
+                            setText("");
+                        }
+                    }
+                };
+            }
+        });
         return tableView;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        numCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Coin, Coin>, ObservableValue<Coin>>() {
+            @Override public ObservableValue<Coin> call(TableColumn.CellDataFeatures<Coin, Coin> p) {
+                return new ReadOnlyObjectWrapper(p.getValue());
+            }
+        });
+
+        numCol.setCellFactory(new Callback<TableColumn<Coin, Coin>, TableCell<Coin, Coin>>() {
+            @Override public TableCell<Coin, Coin> call(TableColumn<Coin, Coin> param) {
+                return new TableCell<Coin, Coin>() {
+                    @Override protected void updateItem(Coin item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (this.getTableRow() != null && item != null) {
+                            setText(this.getTableRow().getIndex()+"");
+                        } else {
+                            setText("");
+                        }
+                    }
+                };
+            }
+        });
+        sortButton.getItems().clear();
+        sortButton.getItems().add(new MenuItem("Alphabetical"));
+        sortButton.getItems().add(new MenuItem("Price"));
+        sortButton.getItems().add(new MenuItem("Market Cap"));
+        sortButton.getItems().add(new MenuItem("24h Change"));
         coinPage.setPageCount((int)Math.ceil((double)CoinList.getList().length/CoinList.MAX_MARKET_INPUT));
         coinPage.setPageFactory(new Callback<Integer, Node>() {
             @Override
@@ -172,7 +222,7 @@ public class CoinMainController implements Initializable{
         coin = getCoin();
         transition = new HamburgerBasicCloseTransition(hamburger);
         transition.setRate(-1);
-        name.setText(getName());
+        //name.setText(getName());
         
         startLoad();
     }
@@ -212,6 +262,7 @@ public class CoinMainController implements Initializable{
             row.setOnMouseClicked(e -> {
                 if (e.getClickCount() == 2 && (!row.isEmpty()) ) {
                     infoPane.toFront();
+                    coinNameLabel.setText(row.getItem().getName());
                 }
             });
             return row;

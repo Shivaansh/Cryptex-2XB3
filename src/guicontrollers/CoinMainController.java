@@ -2,25 +2,26 @@ package guicontrollers;
 
 import coin.Coin;
 import coin.CoinList;
+import coin.SortOrder;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.transitions.hamburger.HamburgerBasicCloseTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,6 +30,8 @@ import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import util.APINotRespondingException;
+import util.Logger;
+import util.search.Search;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -59,12 +62,13 @@ public class CoinMainController implements Initializable{
     @FXML private Label volumeLabel;
     @FXML private Label supplyLabel;
     @FXML private ImageView coinImage;
+    @FXML private JFXTextField searchBar;
 
     private static TableView<Coin> table2;
 
     private HamburgerBasicCloseTransition transition;
     private int start = 0;
-    private int pageNum = 1;
+    
     private static ObservableList<Coin> coin = FXCollections.observableArrayList();
 
     @FXML
@@ -211,11 +215,33 @@ public class CoinMainController implements Initializable{
                 };
             }
         });
+       
+        searchBar.textProperty().addListener((obs, oldText, newText ) -> {
+            if(newText.isEmpty())
+            	createPage(0);
+            else {
+            	search();
+            }
+        });
+ 
+        MenuItem alphabetical = new MenuItem("Alphabetical");
+        alphabetical.setOnAction((event) -> {sortList(SortOrder.ALPHABETICAL);});
+        
+        MenuItem price = new MenuItem("Price");
+        price.setOnAction((event) -> {sortList(SortOrder.PRICE);});
+        
+        MenuItem mktcap = new MenuItem("Market");
+        mktcap.setOnAction((event) -> {sortList(SortOrder.MKTCAP);});
+        
+        MenuItem change = new MenuItem("24h Change");
+        change.setOnAction((event) -> {sortList(SortOrder.CHANGE);});
+        
         sortButton.getItems().clear();
-        sortButton.getItems().add(new MenuItem("Alphabetical"));
-        sortButton.getItems().add(new MenuItem("Price"));
-        sortButton.getItems().add(new MenuItem("Market Cap"));
-        sortButton.getItems().add(new MenuItem("24h Change"));
+        sortButton.getItems().add(alphabetical);
+        sortButton.getItems().add(price);
+        sortButton.getItems().add(mktcap);
+        sortButton.getItems().add(change);
+        
         coinPage.setPageCount((int)Math.ceil((double)CoinList.getList().length/CoinList.MAX_MARKET_INPUT));
         coinPage.setPageFactory(new Callback<Integer, Node>() {
             @Override
@@ -233,6 +259,12 @@ public class CoinMainController implements Initializable{
         name.setText(getName());
         
         startLoad();
+    }
+    
+    private void sortList(SortOrder s) {
+    	CoinList.sort(s);
+    	Logger.info("Searching by " + s.toString());
+    	createPage(0);
     }
 
     private String getName(){
@@ -296,11 +328,17 @@ public class CoinMainController implements Initializable{
     }
 
     @FXML public void searchClicked(){
-        infoPane.toFront();
+    	search();
     }
 
     @FXML public void searchEntered(ActionEvent e){
-        infoPane.toFront();
+    	search();
+    }
+    
+    private void search() {
+    	Coin[] list = (Coin[]) Search.search(CoinList.getAlphabeticalList(), searchBar.getText());
+        tableView.setItems(FXCollections.observableArrayList(list));
+    	tableView.refresh();
     }
     
     private void startLoad() {
@@ -315,17 +353,31 @@ public class CoinMainController implements Initializable{
 		loadThread.setDaemon(true);
 		loadThread.start();
     }
-    
+
     private void runLoad() {
     	try {
     		while(!CoinList.marketDataFullyLoaded())
-    			CoinList.loadNextMarketData(60, "USD");
+    			CoinList.loadNextMarketData(CoinList.MAX_MARKET_INPUT, "USD");
+    		
+    			Logger.info("Finished loading market data");
 		} catch (APINotRespondingException e) {
 			e.printStackTrace();
 		}
     }
     
-    @FXML public void refreshClicked(){}
+    @FXML public void refreshClicked(){
+    	CoinList.resetMarketData();
+		try {
+			CoinList.loadNextMarketData(CoinList.MAX_MARKET_INPUT, "USD");
+		} catch (APINotRespondingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	createPage(0);
+    	startLoad();
+    }
     
-    @FXML public void sortClicked(){}
+    @FXML public void sortClicked(){
+    	  
+    }
 }

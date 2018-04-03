@@ -51,7 +51,7 @@ public class APIHandler {
 			urlString += params[i] + "=" + params[i+1] + "&";
 		}
 		
-		Logger.info("Attempting to fetch " + urlString);
+		//Logger.info("Attempting to fetch " + urlString);
 		
 		InputStream input;
 		URL url;

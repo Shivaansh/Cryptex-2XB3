@@ -12,6 +12,6 @@ import coin.Coin;
 public class NameComparator implements Comparator<Coin>{
 	@Override
 	public int compare(Coin c1, Coin c2) {
-		return c1.getName().compareTo(c2.getName());
+		return c1.getName().compareToIgnoreCase(c2.getName());
 	}
 }

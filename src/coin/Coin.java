@@ -43,13 +43,13 @@ public class Coin{
 	 * @param jsonObject JSONObject which populates the fields in the coin object
 	 */
 	public Coin(JsonObject jsonObject) {
-		name = jsonObject.get("CoinName").getAsString();
+		name = jsonObject.get("CoinName").getAsString().trim();
 		code = jsonObject.get("Name").getAsString();
 		internalOrder = jsonObject.get("SortOrder").getAsInt();
 		id = jsonObject.get("Id").getAsInt();
 		
 		//totalSupply not always consistently formatted in API
-		String totalSupplyStr = jsonObject.get("TotalCoinSupply").toString().replace(",","").replace(" ", "");
+		String totalSupplyStr = jsonObject.getAsJsonPrimitive("TotalCoinSupply").getAsString().trim().replace(",", "");
 		try {
 			totalSupply = Double.parseDouble(totalSupplyStr);
 		}catch(NumberFormatException e){

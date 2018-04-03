@@ -33,6 +33,7 @@ public class CoinList{
 	private static SortOrder sortOrder = SortOrder.NOT_SORTED; //sort order currently used
 	
 	private static Coin[] list; //stores the actual coinlist
+	private static Coin[] alphabetical; //stores the coins in alphabetical order (for searching)
 	
 	private static boolean isInit = false; //if coinlist is initialized (coin objects with names and code)
 	private static boolean allMarketLoaded = false; //if all coins added to market data
@@ -51,12 +52,16 @@ public class CoinList{
 		JsonObject mainObj = APIHandler.request(CallType.COIN_LIST).get("Data").getAsJsonObject();
 	
 		Set<Entry<String, JsonElement>> dataMap = mainObj.entrySet();
+		
 		list = new Coin[dataMap.size()];
+		alphabetical = new Coin[dataMap.size()];
 		
 		//initializes all coins in list using entry set
 		int i = 0;
 		for(Entry<String, JsonElement> e : dataMap) {
-			list[i++] = new Coin(e.getValue().getAsJsonObject());
+			Coin c = new Coin(e.getValue().getAsJsonObject());
+			list[i] = c;
+			alphabetical[i++] = c;
 		}
 		
 		isInit = true;
@@ -64,6 +69,8 @@ public class CoinList{
 		
 		QuickSort.sort(list, new InternalOrderComparator());
 		sortOrder = SortOrder.INTERNAL_ID;
+		
+		QuickSort.sort(alphabetical, new NameComparator());
 	}
 	
 	/**
@@ -182,9 +189,9 @@ public class CoinList{
 			dispObj = rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
 		}catch(NullPointerException e) {
 			for(int c : coins) {
-				list[c].setMarketCap(Double.NaN);
-				list[c].setPrice(Double.NaN);
-				list[c].setDailyChangePercent(Double.NaN);
+				list[c].setMarketCap(Double.NEGATIVE_INFINITY);
+				list[c].setPrice(Double.NEGATIVE_INFINITY);
+				list[c].setDailyChangePercent(Double.NEGATIVE_INFINITY);
 				
 				list[c].setDisplayDailyChangePercent("-");
 				list[c].setDisplayMarketCap("-");
@@ -235,9 +242,26 @@ public class CoinList{
 	private static void setCoinMarketData(int start, int end, String param, String relCoinCode) throws APINotRespondingException {
 		//get root object from API
 		JsonObject rootObj = APIHandler.request(CallType.PRICE_MULTI_FULL, "fsyms", param, "tsyms", relCoinCode);
-	
-		JsonObject rawObj = rootObj.get("RAW").getAsJsonObject(); //for raw data
-		JsonObject dispObj = rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
+		
+		
+		JsonObject rawObj = null; 
+		JsonObject dispObj = null; 
+
+		try {
+			rawObj= rootObj.get("RAW").getAsJsonObject(); //for raw data
+			dispObj= rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
+		}catch(NullPointerException e) {
+			for(int i = start; i < end - 1; i++) {
+				list[i].setMarketCap(Double.NEGATIVE_INFINITY);
+				list[i].setPrice(Double.NEGATIVE_INFINITY);
+				list[i].setDailyChangePercent(Double.NEGATIVE_INFINITY);
+				
+				list[i].setDisplayDailyChangePercent("-");
+				list[i].setDisplayMarketCap("-");
+				list[i].setDisplayPrice("-");
+			}
+			return;
+		}
 		
 		JsonObject currCoinObj;
 		Iterator<Entry<String, JsonElement>> iterRaw = rawObj.entrySet().iterator();
@@ -256,7 +280,7 @@ public class CoinList{
 				list[i].setPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsDouble());
 				
 				if(currCoinObj.get("CHANGEPCT24HOUR").isJsonNull())
-					list[i].setDailyChangePercent(Double.NaN);
+					list[i].setDailyChangePercent(Double.NEGATIVE_INFINITY);
 				else
 					list[i].setDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsDouble());
 				
@@ -273,9 +297,9 @@ public class CoinList{
 					currDisp = iterDisp.next();
 				}
 			} else {
-				list[i].setMarketCap(Double.NaN);
-				list[i].setPrice(Double.NaN);
-				list[i].setDailyChangePercent(Double.NaN);
+				list[i].setMarketCap(Double.NEGATIVE_INFINITY);
+				list[i].setPrice(Double.NEGATIVE_INFINITY);
+				list[i].setDailyChangePercent(Double.NEGATIVE_INFINITY);
 				
 				list[i].setDisplayDailyChangePercent("-");
 				list[i].setDisplayMarketCap("-");
@@ -315,6 +339,17 @@ public class CoinList{
 	}
 	
 	/**
+	 * Gets reference to a coin list lexographically sorted by coin name
+	 * @return coin list sorted by name
+	 */
+	public static Coin[] getAlphabeticalList() {
+		if(!isInit)
+			throw new IllegalStateException("CoinList must be initialized!");
+		
+		return alphabetical;
+	}
+	
+	/**
 	 * Gets the current sort order
 	 * @return SortOrder enum of current sorting order
 	 */
@@ -341,8 +376,9 @@ public class CoinList{
 		case PRICE: return new PriceComparator(); 
 		case MKTCAP: return new MarketCapComparator();
 		case CHANGE: return new DailyChangeComparator();
+		default:
+			return null;
 		}
-		return null;
 	}
 	
 	/**

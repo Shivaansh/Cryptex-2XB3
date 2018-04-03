@@ -103,7 +103,8 @@ public class LoadController implements Initializable {
 
                 if(count == 0) {
                     CoinList.init();
-                    CoinList.loadAllMarketData("USD");
+                    //CoinList.loadAllMarketData("USD");
+                    CoinList.loadNextMarketData(CoinList.MAX_MARKET_INPUT, "USD");
                 }
                 
                 Coin[] list = CoinList.getList();

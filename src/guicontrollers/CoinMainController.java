@@ -23,6 +23,8 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
@@ -59,7 +61,7 @@ public class CoinMainController implements Initializable{
     @FXML private Label capLabel;
     @FXML private Label volumeLabel;
     @FXML private Label supplyLabel;
-    
+    @FXML private ImageView coinImage;
     @FXML private JFXTextField searchBar;
 
     private static TableView<Coin> table2;
@@ -310,6 +312,11 @@ public class CoinMainController implements Initializable{
                         e1.printStackTrace();
                     };
                     supplyLabel.setText("Total Supply: " + row.getItem().getTotalSupply());
+                    try {
+                        coinImage.setImage(new Image("https://www.cryptocompare.com"+row.getItem().getImagePath()));
+                    } catch (APINotRespondingException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             });
             return row;

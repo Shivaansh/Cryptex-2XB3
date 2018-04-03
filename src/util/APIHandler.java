@@ -16,10 +16,11 @@ public class APIHandler {
 	
 	/** Enum containing all possible API calls */
 	public static enum CallType {
-		COIN_LIST ("all/coinlist"),
-		PRICE_MULTI_FULL ("pricemultifull"),
-		PRICE ("price"), 
-		HISTO_DAY("histoday");
+		COIN_LIST ("https://min-api.cryptocompare.com/data/all/coinlist"),
+		PRICE_MULTI_FULL ("https://min-api.cryptocompare.com/data/pricemultifull"),
+		PRICE ("https://min-api.cryptocompare.com/data/price"), 
+		SNAP_SHOT_FULL ("https://www.cryptocompare.com/api/data/coinsnapshotfullbyid"),
+		HISTO_DAY("https://min-api.cryptocompare.com/data/histoday");
 		
 		/** contains path to data in API */
 		private final String path;
@@ -29,7 +30,6 @@ public class APIHandler {
 		}
 	}
 	
-	private final static String BASE_URL = "https://min-api.cryptocompare.com/data/";
 	
 	/**
 	 * Makes a request to the API using a CallType and wanted parameters
@@ -46,12 +46,12 @@ public class APIHandler {
 		}
 		
 		//create url from input parameters
-		String urlString = BASE_URL + type.path + "?";
+		String urlString = type.path + "?";
 		for(int i = 0; i < params.length - 1; i++) {
 			urlString += params[i] + "=" + params[i+1] + "&";
 		}
 		
-		//Logger.info("Attempting to fetch " + urlString);
+		Logger.info("Attempting to fetch " + urlString);
 		
 		InputStream input;
 		URL url;

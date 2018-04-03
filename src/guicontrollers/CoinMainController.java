@@ -2,6 +2,8 @@ package guicontrollers;
 
 import coin.Coin;
 import coin.CoinList;
+import coin.SortOrder;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerBasicCloseTransition;
@@ -12,10 +14,12 @@ import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -57,7 +61,6 @@ public class CoinMainController implements Initializable{
 
     private HamburgerBasicCloseTransition transition;
     private int start = 0;
-    private int pageNum = 1;
     private static ObservableList<Coin> coin = FXCollections.observableArrayList();
 
     @FXML
@@ -203,11 +206,17 @@ public class CoinMainController implements Initializable{
                 };
             }
         });
+       
+      
+ 
+        
         sortButton.getItems().clear();
         sortButton.getItems().add(new MenuItem("Alphabetical"));
         sortButton.getItems().add(new MenuItem("Price"));
         sortButton.getItems().add(new MenuItem("Market Cap"));
         sortButton.getItems().add(new MenuItem("24h Change"));
+        
+        
         coinPage.setPageCount((int)Math.ceil((double)CoinList.getList().length/CoinList.MAX_MARKET_INPUT));
         coinPage.setPageFactory(new Callback<Integer, Node>() {
             @Override
@@ -293,17 +302,29 @@ public class CoinMainController implements Initializable{
 		loadThread.setDaemon(true);
 		loadThread.start();
     }
-    
+
     private void runLoad() {
     	try {
     		while(!CoinList.marketDataFullyLoaded())
-    			CoinList.loadNextMarketData(60, "USD");
+    			CoinList.loadNextMarketData(CoinList.MAX_MARKET_INPUT, "USD");
 		} catch (APINotRespondingException e) {
 			e.printStackTrace();
 		}
     }
     
-    @FXML public void refreshClicked(){}
+    @FXML public void refreshClicked(){
+    	CoinList.resetMarketData();
+		try {
+			CoinList.loadNextMarketData(CoinList.MAX_MARKET_INPUT, "USD");
+		} catch (APINotRespondingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	createPage(0);
+    	startLoad();
+    }
     
-    @FXML public void sortClicked(){}
+    @FXML public void sortClicked(){
+    	  
+    }
 }

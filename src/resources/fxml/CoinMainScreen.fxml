@@ -55,7 +55,7 @@
                <children>
                   <AnchorPane fx:id="infoPane" prefHeight="650.0" prefWidth="700.0" style="-fx-background-color: #00BAFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane layoutX="37.0" layoutY="37.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #7fdcff;" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+                        <AnchorPane layoutX="37.0" layoutY="37.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #7fdcff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <GridPane prefWidth="590.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
@@ -66,7 +66,7 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <AnchorPane prefHeight="463.0" prefWidth="269.0" style="-fx-background-color: white;">
+                                    <AnchorPane prefHeight="463.0" prefWidth="269.0" style="-fx-background-color: white; -fx-border-color: black;">
                                        <children>
                                           <Label fx:id="coinNameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="14.0" prefWidth="280.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
                                              <font>
@@ -115,7 +115,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" GridPane.columnIndex="1">
                                        <children>
-                                          <LineChart layoutX="14.0" layoutY="14.0" prefHeight="271.0" prefWidth="272.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                                          <LineChart fx:id="coinGraph" layoutX="14.0" layoutY="14.0" prefHeight="271.0" prefWidth="272.0" style="-fx-text-fill: white;" stylesheets="@../stylesheets/GraphStylesheet.css" title="Date vs Price" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="40.0">
                                             <xAxis>
                                               <CategoryAxis side="BOTTOM" />
                                             </xAxis>
@@ -146,7 +146,7 @@
                               </GridPane>
                            </children>
                         </AnchorPane>
-                        <JFXButton layoutX="634.0" layoutY="21.0" onMouseClicked="#closeInfo" style="-fx-background-color: black;" text="X" textFill="WHITE" AnchorPane.rightAnchor="12.399999999999999" AnchorPane.topAnchor="21.0" />
+                        <JFXButton layoutX="634.0" layoutY="21.0" onMouseClicked="#closeInfo" style="-fx-background-color: #00BAFF;" text="X" textFill="WHITE" AnchorPane.rightAnchor="12.399999999999999" AnchorPane.topAnchor="21.0" />
                      </children>
                   </AnchorPane>
                   <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

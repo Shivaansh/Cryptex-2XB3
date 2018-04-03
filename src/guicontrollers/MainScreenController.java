@@ -116,13 +116,7 @@ public class MainScreenController {
     }
 
     @FXML public void inClicked(ActionEvent event) throws IOException {
-        Parent load1 = FXMLLoader.load(getClass().getResource(loginScreenPath));
-        Scene loadScene = new Scene(load1);
-        window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        window.setScene(loadScene);
-        window.getIcons().add(new Image(iconPath));
-        window.show();
-        /*TranslateTransition ft=new TranslateTransition(new Duration(500), screenIn);
+        TranslateTransition ft=new TranslateTransition(new Duration(500), screenIn);
         ft.setToX(0);
         ft.play();
         state1 = "in";
@@ -149,7 +143,7 @@ public class MainScreenController {
         else{
             countIn++;
         }
-        state = "in";*/
+        state = "in";
     }
     @FXML public void keyPressed(KeyEvent event){
         switch(event.getCode()){

@@ -189,9 +189,9 @@ public class CoinList{
 			dispObj = rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
 		}catch(NullPointerException e) {
 			for(int c : coins) {
-				list[c].setMarketCap(Double.NaN);
-				list[c].setPrice(Double.NaN);
-				list[c].setDailyChangePercent(Double.NaN);
+				list[c].setMarketCap(Double.NEGATIVE_INFINITY);
+				list[c].setPrice(Double.NEGATIVE_INFINITY);
+				list[c].setDailyChangePercent(Double.NEGATIVE_INFINITY);
 				
 				list[c].setDisplayDailyChangePercent("-");
 				list[c].setDisplayMarketCap("-");
@@ -242,9 +242,26 @@ public class CoinList{
 	private static void setCoinMarketData(int start, int end, String param, String relCoinCode) throws APINotRespondingException {
 		//get root object from API
 		JsonObject rootObj = APIHandler.request(CallType.PRICE_MULTI_FULL, "fsyms", param, "tsyms", relCoinCode);
-	
-		JsonObject rawObj = rootObj.get("RAW").getAsJsonObject(); //for raw data
-		JsonObject dispObj = rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
+		
+		
+		JsonObject rawObj = null; 
+		JsonObject dispObj = null; 
+
+		try {
+			rawObj= rootObj.get("RAW").getAsJsonObject(); //for raw data
+			dispObj= rootObj.get("DISPLAY").getAsJsonObject(); //for stylized display data
+		}catch(NullPointerException e) {
+			for(int i = start; i < end - 1; i++) {
+				list[i].setMarketCap(Double.NEGATIVE_INFINITY);
+				list[i].setPrice(Double.NEGATIVE_INFINITY);
+				list[i].setDailyChangePercent(Double.NEGATIVE_INFINITY);
+				
+				list[i].setDisplayDailyChangePercent("-");
+				list[i].setDisplayMarketCap("-");
+				list[i].setDisplayPrice("-");
+			}
+			return;
+		}
 		
 		JsonObject currCoinObj;
 		Iterator<Entry<String, JsonElement>> iterRaw = rawObj.entrySet().iterator();
@@ -263,7 +280,7 @@ public class CoinList{
 				list[i].setPrice(currCoinObj.getAsJsonPrimitive("PRICE").getAsDouble());
 				
 				if(currCoinObj.get("CHANGEPCT24HOUR").isJsonNull())
-					list[i].setDailyChangePercent(Double.NaN);
+					list[i].setDailyChangePercent(Double.NEGATIVE_INFINITY);
 				else
 					list[i].setDailyChangePercent(currCoinObj.getAsJsonPrimitive("CHANGEPCT24HOUR").getAsDouble());
 				
@@ -280,9 +297,9 @@ public class CoinList{
 					currDisp = iterDisp.next();
 				}
 			} else {
-				list[i].setMarketCap(Double.NaN);
-				list[i].setPrice(Double.NaN);
-				list[i].setDailyChangePercent(Double.NaN);
+				list[i].setMarketCap(Double.NEGATIVE_INFINITY);
+				list[i].setPrice(Double.NEGATIVE_INFINITY);
+				list[i].setDailyChangePercent(Double.NEGATIVE_INFINITY);
 				
 				list[i].setDisplayDailyChangePercent("-");
 				list[i].setDisplayMarketCap("-");

@@ -187,6 +187,7 @@ public class CoinMainController implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // https://stackoverflow.com/questions/16384879/auto-numbered-table-rows-javafx
         numCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Coin, Coin>, ObservableValue<Coin>>() {
             @Override public ObservableValue<Coin> call(TableColumn.CellDataFeatures<Coin, Coin> p) {
                 return new ReadOnlyObjectWrapper(p.getValue());
@@ -227,7 +228,7 @@ public class CoinMainController implements Initializable{
         coin = getCoin();
         transition = new HamburgerBasicCloseTransition(hamburger);
         transition.setRate(-1);
-        //name.setText(getName());
+        name.setText(getName());
         
         startLoad();
     }
@@ -271,7 +272,11 @@ public class CoinMainController implements Initializable{
                     codeLabel.setText(row.getItem().getCode());
                     priceLabel.setText("Price: " + row.getItem().getDisplayPrice());
                     capLabel.setText("Market Cap: " + row.getItem().getDisplayMarketCap());
-                    volumeLabel.setText("Change 24H: " + row.getItem().getDisplayDailyChangePercent());
+                    try {
+                        volumeLabel.setText("Volume 24H: " + row.getItem().getDisplayVolume24H("USD"));
+                    } catch (APINotRespondingException e1) {
+                        e1.printStackTrace();
+                    };
                     supplyLabel.setText("Total Supply: " + row.getItem().getTotalSupply());
                 }
             });

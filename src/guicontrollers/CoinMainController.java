@@ -149,7 +149,7 @@ public class CoinMainController implements Initializable{
 
         //Add to table
         if((pageIndex+1) != (int)Math.ceil((double)CoinList.getList().length/CoinList.MAX_MARKET_INPUT)){
-            tableView.setItems(FXCollections.observableArrayList(FXCollections.observableArrayList(CoinList.getList()).subList(0+(pageIndex*CoinList.MAX_MARKET_INPUT),(CoinList.MAX_MARKET_INPUT-1)+(pageIndex*CoinList.MAX_MARKET_INPUT))));
+            tableView.setItems(FXCollections.observableArrayList(FXCollections.observableArrayList(CoinList.getList()).subList(0+(pageIndex*CoinList.MAX_MARKET_INPUT),(CoinList.MAX_MARKET_INPUT)+(pageIndex*CoinList.MAX_MARKET_INPUT))));
         }
 
         else{

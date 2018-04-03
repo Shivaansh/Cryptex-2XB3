@@ -52,6 +52,11 @@ public class CoinMainController implements Initializable{
     @FXML private JFXButton refreshButton;
     @FXML private MenuButton sortButton;
     @FXML private Label coinNameLabel;
+    @FXML private Label codeLabel;
+    @FXML private Label priceLabel;
+    @FXML private Label capLabel;
+    @FXML private Label volumeLabel;
+    @FXML private Label supplyLabel;
 
     private static TableView<Coin> table2;
 
@@ -263,6 +268,11 @@ public class CoinMainController implements Initializable{
                 if (e.getClickCount() == 2 && (!row.isEmpty()) ) {
                     infoPane.toFront();
                     coinNameLabel.setText(row.getItem().getName());
+                    codeLabel.setText(row.getItem().getCode());
+                    priceLabel.setText("Price: " + row.getItem().getDisplayPrice());
+                    capLabel.setText("Market Cap: " + row.getItem().getDisplayMarketCap());
+                    volumeLabel.setText("Change 24H: " + row.getItem().getDisplayDailyChangePercent());
+                    supplyLabel.setText("Total Supply: " + row.getItem().getTotalSupply());
                 }
             });
             return row;

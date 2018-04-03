@@ -1,7 +1,14 @@
-package coin;
+package coin.comparator;
 
 import java.util.Comparator;
 
+import coin.Coin;
+
+/**
+ * Comparator to compare daily change percent
+ * @author Somar Aani
+ *
+ */
 public class DailyChangeComparator implements Comparator<Coin> {
 	@Override
 	public int compare(Coin c1, Coin c2) {

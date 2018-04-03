@@ -16,57 +16,55 @@ public class APIHandler {
 	
 	/** Enum containing all possible API calls */
 	public static enum CallType {
-		COIN_LIST ("all/coinlist", "", ""),
-		PRICE_MULTI_FULL ("pricemultifull", "fsyms", "tsyms"),
-		PRICE ("price", "fsym", "tsyms");
+		COIN_LIST ("https://min-api.cryptocompare.com/data/all/coinlist"),
+		PRICE_MULTI_FULL ("https://min-api.cryptocompare.com/data/pricemultifull"),
+		PRICE ("https://min-api.cryptocompare.com/data/price"), 
+		SNAP_SHOT_FULL ("https://www.cryptocompare.com/api/data/coinsnapshotfullbyid"),
+		HISTO_DAY("https://min-api.cryptocompare.com/data/histoday");
 		
 		/** contains path to data in API */
 		private final String path;
-		private final String inputParam;
-		private final String outputParam;
 		
-		CallType(String path, String inputParam, String outputParam) {
+		CallType(String path) {
 			this.path = path;
-			this.inputParam = inputParam;
-			this.outputParam = outputParam;
 		}
 	}
 	
-	private final static String BASE_URL = "https://min-api.cryptocompare.com/data/";
 	
 	/**
-	 * Makes a request to the API that does not require parameters
+	 * Makes a request to the API using a CallType and wanted parameters
 	 * @param type type of call to make
+	 * @param params list of input parameters. Each input field must be followed by its parameter. Format is (tag1, input1, tag2, input2 ... tag n, input n)
 	 * @return JSON object containing data from API
 	 * @throws APINotRespondingException if API does not respond or responds with an error
+	 * @throws IllegalArgumentException if length of parameters is not even (not every parameter tag has a corresponding input)
 	 */
-	public static JsonObject request(CallType type) throws APINotRespondingException {
-		return request(type, "", "");
-	} 
-	
-	/**
-	 * Makes a request to the API using parameters
-	 * @param type type of call to make
-	 * @param inParam API input parameters
-	 * @param outParam API output parameters
-	 * @return JSON object containing data from API
-	 * @throws APINotRespondingException if API does not respond or responds with an error
-	 */
-	public static JsonObject request(CallType type, String inParam, String outParam) throws APINotRespondingException {
+	public static JsonObject request(CallType type, String... params) throws APINotRespondingException {
+		
+		if(params.length % 2 != 0) {
+			throw new IllegalArgumentException("Input parameters must match number of tags!");
+		}
+		
+		//create url from input parameters
+		String urlString = type.path + "?";
+		for(int i = 0; i < params.length - 1; i++) {
+			urlString += params[i] + "=" + params[i+1] + "&";
+		}
+		
+		Logger.info("Attempting to fetch " + urlString);
+		
 		InputStream input;
 		URL url;
 		
 		//open stream to api
 		try {
-			url = new URL(BASE_URL + type.path + "?" + type.inputParam + "=" + inParam + "&" + type.outputParam +"=" + outParam);
+			url = new URL(urlString);
 			input = url.openConnection().getInputStream();
 		}
 		catch(IOException e) {
 			throw new APINotRespondingException(e);
 		}
-		
-		//Logger.info("Attempting to fetch " + url.toString());
-		
+				
 		//create rootObject from API JSON
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 		JsonObject rootObject = new Gson().fromJson(reader, JsonObject.class);

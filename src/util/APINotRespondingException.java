@@ -1,5 +1,10 @@
 package util;
 
+/**
+ * An exception that is thrown if the API does not respond
+ * @author Somar Aani
+ *
+ */
 public class APINotRespondingException extends Exception {
 	
 	public APINotRespondingException() {

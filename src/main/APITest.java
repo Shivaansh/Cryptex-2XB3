@@ -13,9 +13,16 @@ public class APITest {
 	public static void main(String args[]) {
 		try {
 			CoinList.init();
-			//CoinList.loadNextMarketData(CoinList.MAX_MARKET_INPUT, "USD");
-			System.out.println(CoinList.getCoin("BTC").getDisplayVolume24H("USD"));
-			System.out.println(CoinList.getCoin("BTC").getImagePath());
+			
+			for(Coin c : CoinList.getAlphabeticalList()) {
+				System.out.print(c.getName() + ", ");
+			}
+			
+			System.out.println();
+			
+			for(Coin c : CoinList.getList()) {
+				System.out.print(c.getName() + ", ");
+			}
 						
 		/*	double[] d = CoinList.getCoin("BTC").getDailyHistorical("USD", "10/02/2017", "09/03/2017");
 			for(double a : d)

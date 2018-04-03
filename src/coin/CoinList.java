@@ -33,6 +33,7 @@ public class CoinList{
 	private static SortOrder sortOrder = SortOrder.NOT_SORTED; //sort order currently used
 	
 	private static Coin[] list; //stores the actual coinlist
+	private static Coin[] alphabetical; //stores the coins in alphabetical order (for searching)
 	
 	private static boolean isInit = false; //if coinlist is initialized (coin objects with names and code)
 	private static boolean allMarketLoaded = false; //if all coins added to market data
@@ -51,12 +52,16 @@ public class CoinList{
 		JsonObject mainObj = APIHandler.request(CallType.COIN_LIST).get("Data").getAsJsonObject();
 	
 		Set<Entry<String, JsonElement>> dataMap = mainObj.entrySet();
+		
 		list = new Coin[dataMap.size()];
+		alphabetical = new Coin[dataMap.size()];
 		
 		//initializes all coins in list using entry set
 		int i = 0;
 		for(Entry<String, JsonElement> e : dataMap) {
-			list[i++] = new Coin(e.getValue().getAsJsonObject());
+			Coin c = new Coin(e.getValue().getAsJsonObject());
+			list[i] = c;
+			alphabetical[i++] = c;
 		}
 		
 		isInit = true;
@@ -64,6 +69,8 @@ public class CoinList{
 		
 		QuickSort.sort(list, new InternalOrderComparator());
 		sortOrder = SortOrder.INTERNAL_ID;
+		
+		QuickSort.sort(alphabetical, new NameComparator());
 	}
 	
 	/**
@@ -315,6 +322,17 @@ public class CoinList{
 	}
 	
 	/**
+	 * Gets reference to a coin list lexographically sorted by coin name
+	 * @return coin list sorted by name
+	 */
+	public static Coin[] getAlphabeticalList() {
+		if(!isInit)
+			throw new IllegalStateException("CoinList must be initialized!");
+		
+		return alphabetical;
+	}
+	
+	/**
 	 * Gets the current sort order
 	 * @return SortOrder enum of current sorting order
 	 */
@@ -341,8 +359,9 @@ public class CoinList{
 		case PRICE: return new PriceComparator(); 
 		case MKTCAP: return new MarketCapComparator();
 		case CHANGE: return new DailyChangeComparator();
+		default:
+			return null;
 		}
-		return null;
 	}
 	
 	/**

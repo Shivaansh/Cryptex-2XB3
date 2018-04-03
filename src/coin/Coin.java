@@ -43,7 +43,7 @@ public class Coin{
 	 * @param jsonObject JSONObject which populates the fields in the coin object
 	 */
 	public Coin(JsonObject jsonObject) {
-		name = jsonObject.get("CoinName").getAsString();
+		name = jsonObject.get("CoinName").getAsString().trim();
 		code = jsonObject.get("Name").getAsString();
 		internalOrder = jsonObject.get("SortOrder").getAsInt();
 		id = jsonObject.get("Id").getAsInt();

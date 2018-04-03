@@ -46,6 +46,16 @@
          <center>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
+                  <AnchorPane fx:id="infoPane" prefHeight="650.0" prefWidth="700.0" style="-fx-background-color: #00BAFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label fx:id="coinNameLabel" alignment="CENTER" layoutY="21.0" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Label>
+                        <JFXButton layoutX="634.0" layoutY="21.0" onMouseClicked="#closeInfo" style="-fx-background-color: black;" text="X" textFill="WHITE" AnchorPane.rightAnchor="12.399999999999999" AnchorPane.topAnchor="21.0" />
+                     </children>
+                  </AnchorPane>
                   <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <center>
                         <AnchorPane fx:id="mainAnch" prefHeight="650.0" prefWidth="485.0" style="-fx-background-color: #00BAFF;" BorderPane.alignment="CENTER">
@@ -54,7 +64,7 @@
                               <TableView fx:id="tableView" layoutX="270.0" layoutY="245.0" prefHeight="200.0" prefWidth="200.0" style="-fx-font-size: 17px;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <columns>
                                     <TableColumn fx:id="numCol" editable="false" prefWidth="50.0" resizable="false" sortable="false" style="-fx-alignment: CENTER;" text="#" />
-                                    <TableColumn fx:id="imageCol" editable="false" prefWidth="85.0" resizable="false" sortable="false" style="-fx-alignment: CENTER; -fx-padding: 5;" text="Code" />
+                                    <TableColumn fx:id="codeCol" editable="false" prefWidth="85.0" resizable="false" sortable="false" style="-fx-alignment: CENTER; -fx-padding: 5;" text="Code" />
                                     <TableColumn fx:id="nameCol" editable="false" prefWidth="75.0" resizable="false" sortable="false" style="-fx-alignment: CENTER; -fx-font-weight: bold;" text="Name" />
                                     <TableColumn fx:id="priceCol" editable="false" prefWidth="75.0" resizable="false" sortable="false" style="-fx-alignment: CENTER;" text="Price" />
                                     <TableColumn fx:id="capCol" editable="false" prefWidth="75.0" resizable="false" sortable="false" style="-fx-alignment: CENTER;" text="Market Cap" />
@@ -75,16 +85,6 @@
                         </AnchorPane>
                      </center>
                   </BorderPane>
-                  <AnchorPane fx:id="infoPane" prefHeight="650.0" prefWidth="700.0" style="-fx-background-color: #00BAFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <Label fx:id="coinNameLabel" alignment="CENTER" layoutY="21.0" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                           <font>
-                              <Font name="System Bold" size="30.0" />
-                           </font>
-                        </Label>
-                        <JFXButton layoutX="634.0" layoutY="21.0" onMouseClicked="#closeInfo" style="-fx-background-color: black;" text="X" textFill="WHITE" AnchorPane.rightAnchor="12.399999999999999" AnchorPane.topAnchor="21.0" />
-                     </children>
-                  </AnchorPane>
                </children>
             </AnchorPane>
          </center>

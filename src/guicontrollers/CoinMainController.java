@@ -41,7 +41,7 @@ public class CoinMainController implements Initializable{
     @FXML private Label name;
     @FXML private AnchorPane menuOpen;
     @FXML private TableColumn numCol;
-    @FXML private TableColumn<Coin, ImageView> imageCol;
+    @FXML private TableColumn<Coin, String> codeCol;
     @FXML private TableColumn<Coin, String> nameCol;
     @FXML private TableColumn<Coin, String> priceCol;
     @FXML private TableColumn<Coin, String> capCol;
@@ -112,12 +112,12 @@ public class CoinMainController implements Initializable{
 
         nameCol.setReorderable(false);
         priceCol.setReorderable(false);
-        imageCol.setReorderable(false);
+        codeCol.setReorderable(false);
         numCol.setReorderable(false);
         capCol.setReorderable(false);
 
         //numCol.setCellValueFactory(new PropertyValueFactory<Coin, Integer>("number"));
-        //imageCol.setCellValueFactory(new PropertyValueFactory<Coin, ImageView>("logo"));
+        codeCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("code"));
         nameCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("name"));
         priceCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("displayPrice"));
         capCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("displayMarketCap"));
@@ -169,7 +169,7 @@ public class CoinMainController implements Initializable{
                         super.updateItem(item, empty);
 
                         if (this.getTableRow() != null && item != null) {
-                            setText(this.getTableRow().getIndex()+"");
+                            setText(this.getTableRow().getIndex()+pageIndex*CoinList.MAX_MARKET_INPUT+1+"");
                         } else {
                             setText("");
                         }

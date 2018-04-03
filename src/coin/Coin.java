@@ -49,7 +49,7 @@ public class Coin{
 		id = jsonObject.get("Id").getAsInt();
 		
 		//totalSupply not always consistently formatted in API
-		String totalSupplyStr = jsonObject.get("TotalCoinSupply").toString().replace(",","").replace(" ", "");
+		String totalSupplyStr = jsonObject.getAsJsonPrimitive("TotalCoinSupply").getAsString().trim().replace(",", "");
 		try {
 			totalSupply = Double.parseDouble(totalSupplyStr);
 		}catch(NumberFormatException e){

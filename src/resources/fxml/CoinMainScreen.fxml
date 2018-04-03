@@ -4,6 +4,9 @@
 <?import com.jfoenix.controls.JFXHamburger?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
@@ -14,6 +17,10 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -48,11 +55,97 @@
                <children>
                   <AnchorPane fx:id="infoPane" prefHeight="650.0" prefWidth="700.0" style="-fx-background-color: #00BAFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Label fx:id="coinNameLabel" alignment="CENTER" layoutY="21.0" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                           <font>
-                              <Font name="System Bold" size="30.0" />
-                           </font>
-                        </Label>
+                        <AnchorPane layoutX="37.0" layoutY="37.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #7fdcff;" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+                           <children>
+                              <GridPane prefWidth="590.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <AnchorPane prefHeight="463.0" prefWidth="269.0" style="-fx-background-color: white;">
+                                       <children>
+                                          <Label fx:id="coinNameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="14.0" prefWidth="280.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                                             <font>
+                                                <Font name="System Bold" size="30.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="codeLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="136.0" layoutY="83.0" style="-fx-text-fill: #00BAFF;" textFill="#00baff" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="70.0">
+                                             <font>
+                                                <Font name="System Bold Italic" size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox alignment="CENTER" layoutY="124.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                             <children>
+                                                <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-padding: 10; -fx-background-color: black;">
+                                                   <image>
+                                                      <Image url="@../images/CryptexIcon.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                          </HBox>
+                                          <AnchorPane layoutX="20.0" layoutY="291.0" prefHeight="234.0" prefWidth="260.0" style="-fx-background-color: #bfedff;" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="295.20000000000005">
+                                             <children>
+                                                <Label fx:id="priceLabel" layoutX="20.0" layoutY="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="20.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="capLabel" layoutX="20.0" layoutY="45.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="20.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="volumeLabel" layoutX="20.0" layoutY="75.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="20.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="supplyLabel" layoutX="20.0" layoutY="105.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="20.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" GridPane.columnIndex="1">
+                                       <children>
+                                          <LineChart layoutX="14.0" layoutY="14.0" prefHeight="271.0" prefWidth="272.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                                            <xAxis>
+                                              <CategoryAxis side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis side="LEFT" />
+                                            </yAxis>
+                                          </LineChart>
+                                          <GridPane alignment="CENTER" layoutY="470.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                                            <columnConstraints>
+                                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                             <children>
+                                                <JFXButton style="-fx-background-color: #00BAFF;" text="Daily" textFill="WHITE" />
+                                                <JFXButton style="-fx-background-color: #00BAFF;" text="Weekly" textFill="WHITE" GridPane.columnIndex="1" />
+                                                <JFXButton style="-fx-background-color: #00BAFF;" text="Monthly" textFill="WHITE" GridPane.columnIndex="2" />
+                                                <JFXButton style="-fx-background-color: #00BAFF;" text="Yearly" textFill="WHITE" GridPane.columnIndex="3" />
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
                         <JFXButton layoutX="634.0" layoutY="21.0" onMouseClicked="#closeInfo" style="-fx-background-color: black;" text="X" textFill="WHITE" AnchorPane.rightAnchor="12.399999999999999" AnchorPane.topAnchor="21.0" />
                      </children>
                   </AnchorPane>

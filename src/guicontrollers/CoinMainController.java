@@ -20,6 +20,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -63,6 +65,7 @@ public class CoinMainController implements Initializable{
     @FXML private Label supplyLabel;
     @FXML private ImageView coinImage;
     @FXML private JFXTextField searchBar;
+    @FXML private LineChart<?,?> coinGraph;
 
     private static TableView<Coin> table2;
 
@@ -300,6 +303,7 @@ public class CoinMainController implements Initializable{
         tableView.setRowFactory( tv -> {
             TableRow<Coin> row = new TableRow<>();
             row.setOnMouseClicked(e -> {
+                coinGraph.getData().clear();
                 if (e.getClickCount() == 2 && (!row.isEmpty()) ) {
                     infoPane.toFront();
                     coinNameLabel.setText(row.getItem().getName());
@@ -317,6 +321,19 @@ public class CoinMainController implements Initializable{
                     } catch (APINotRespondingException e1) {
                         e1.printStackTrace();
                     }
+                    double[] graphY = new double[0];
+                    XYChart.Series series = new XYChart.Series();
+
+                    try {
+                        graphY = row.getItem().getDailyHistorical("USD", "01/01/2017", "01/01/2018");
+                    } catch (APINotRespondingException e1) {
+                        e1.printStackTrace();
+                    }
+
+                    for(int i = 1; i <= 30; i++){
+                        series.getData().add(new XYChart.Data(Integer.toString(i), graphY[i-1]));
+                    }
+                    coinGraph.getData().addAll(series);
                 }
             });
             return row;

@@ -6,17 +6,24 @@ import coin.SortOrder;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.transitions.hamburger.HamburgerBasicCloseTransition;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -27,7 +34,9 @@ import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -37,6 +46,7 @@ import util.search.Search;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -44,8 +54,9 @@ public class CoinMainController implements Initializable{
     @FXML private AnchorPane top;
     @FXML private JFXHamburger hamburger;
     @FXML private AnchorPane drawer;
-    @FXML private Label name;
+    @FXML private BorderPane menuBorder;
     @FXML private AnchorPane menuOpen;
+    @FXML private TableColumn likeCol;
     @FXML private TableColumn numCol;
     @FXML private TableColumn<Coin, String> codeCol;
     @FXML private TableColumn<Coin, String> nameCol;
@@ -71,7 +82,7 @@ public class CoinMainController implements Initializable{
 
     private HamburgerBasicCloseTransition transition;
     private int start = 0;
-    
+
     private static ObservableList<Coin> coin = FXCollections.observableArrayList();
 
     @FXML
@@ -119,10 +130,10 @@ public class CoinMainController implements Initializable{
 
     public TableView<Coin> createPage(int pageIndex){
         tableView.scrollTo(0);
-        priceCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
-        nameCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
-        capCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
-        changeCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
+        priceCol.prefWidthProperty().bind(tableView.widthProperty().subtract(225).divide(4));
+        nameCol.prefWidthProperty().bind(tableView.widthProperty().subtract(225).divide(4));
+        capCol.prefWidthProperty().bind(tableView.widthProperty().subtract(225).divide(4));
+        changeCol.prefWidthProperty().bind(tableView.widthProperty().subtract(225).divide(4));
 
         nameCol.setReorderable(false);
         priceCol.setReorderable(false);
@@ -196,6 +207,7 @@ public class CoinMainController implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        sortButton.setDisable(true);
         // https://stackoverflow.com/questions/16384879/auto-numbered-table-rows-javafx
         numCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Coin, Coin>, ObservableValue<Coin>>() {
             @Override public ObservableValue<Coin> call(TableColumn.CellDataFeatures<Coin, Coin> p) {
@@ -218,11 +230,41 @@ public class CoinMainController implements Initializable{
                 };
             }
         });
-       
+
+        likeCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Coin, Coin>, ObservableValue<Coin>>() {
+            @Override public ObservableValue<Coin> call(TableColumn.CellDataFeatures<Coin, Coin> p) {
+                return new ReadOnlyObjectWrapper(p.getValue());
+            }
+        });
+
+        likeCol.setCellFactory(new Callback<TableColumn<Coin, Coin>, TableCell<Coin, Coin>>() {
+            @Override public TableCell<Coin, Coin> call(TableColumn<Coin, Coin> param) {
+                return new TableCell<Coin, Coin>() {
+                    @Override protected void updateItem(Coin item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (this.getTableRow() != null && item != null) {
+                            BorderPane border = new BorderPane();
+                            MaterialDesignIconView icon = new MaterialDesignIconView(MaterialDesignIcon.STAR_OUTLINE);
+                            icon.setCursor(Cursor.HAND);
+                            icon.setGlyphSize(30);
+                            border.setCenter(icon);
+                            setGraphic(border);
+                        } else {
+                            setText("");
+                        }
+                    }
+                };
+            }
+        });
+
         searchBar.textProperty().addListener((obs, oldText, newText ) -> {
-            if(newText.isEmpty())
-            	createPage(0);
+            if(newText.isEmpty()) {
+                coinPage.setPageCount((int) Math.ceil((double) CoinList.getList().length / CoinList.MAX_MARKET_INPUT));
+                createPage(0);
+            }
             else {
+                coinPage.setPageCount(1);
             	search();
             }
         });
@@ -259,8 +301,11 @@ public class CoinMainController implements Initializable{
         coin = getCoin();
         transition = new HamburgerBasicCloseTransition(hamburger);
         transition.setRate(-1);
-        name.setText(getName());
-        
+        try {
+            menuBorder.setCenter(FXMLLoader.load(getClass().getResource("/resources/fxml/SideMenu.fxml")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         startLoad();
     }
     
@@ -268,23 +313,6 @@ public class CoinMainController implements Initializable{
     	CoinList.sort(s);
     	Logger.info("Searching by " + s.toString());
     	createPage(0);
-    }
-
-    private String getName(){
-        Scanner x = null;
-        String[] nameFull;
-        try {
-            x = new Scanner(new File("info.txt"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        while(Objects.requireNonNull(x).hasNext()){
-            nameFull = x.nextLine().split(",");
-            if(nameFull[0].equals(MainScreenController.getTemp())){
-                return nameFull[2];
-            }
-        }
-        return null;
     }
 
     public static void setCoinArray(ObservableList<Coin> coin) {
@@ -343,14 +371,6 @@ public class CoinMainController implements Initializable{
     @FXML public void closeInfo(){
         infoPane.toBack();
     }
-
-    @FXML public void searchClicked(){
-    	search();
-    }
-
-    @FXML public void searchEntered(ActionEvent e){
-    	search();
-    }
     
     private void search() {
     	Coin[] list = (Coin[]) Search.search(CoinList.getAlphabeticalList(), searchBar.getText());
@@ -359,7 +379,7 @@ public class CoinMainController implements Initializable{
     }
     
     private void startLoad() {
-    	Runnable runnable = new Runnable() {
+    	/*Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
 				runLoad();
@@ -368,7 +388,18 @@ public class CoinMainController implements Initializable{
 		
 		Thread loadThread = new Thread(runnable);
 		loadThread.setDaemon(true);
-		loadThread.start();
+		loadThread.start();*/
+        Task<Void> task = new Task<Void>() {
+            @Override
+            public Void call() throws Exception {
+                runLoad();
+                return null ;
+            }
+        };
+        task.setOnSucceeded(e -> {
+            sortButton.setDisable(false);
+        });
+        new Thread(task).start();
     }
 
     private void runLoad() {

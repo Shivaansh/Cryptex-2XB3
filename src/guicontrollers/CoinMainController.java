@@ -77,6 +77,7 @@ public class CoinMainController implements Initializable{
     @FXML private ImageView coinImage;
     @FXML private JFXTextField searchBar;
     @FXML private LineChart<?,?> coinGraph;
+    @FXML private Label sortLabel;
 
     private static TableView<Coin> table2;
 
@@ -312,6 +313,7 @@ public class CoinMainController implements Initializable{
     private void sortList(SortOrder s) {
     	CoinList.sort(s);
     	Logger.info("Searching by " + s.toString());
+    	sortLabel.setText("Sorted by " + s.toString());
     	createPage(0);
     }
 

@@ -20,7 +20,8 @@ public class APIHandler {
 		PRICE_MULTI_FULL ("https://min-api.cryptocompare.com/data/pricemultifull"),
 		PRICE ("https://min-api.cryptocompare.com/data/price"), 
 		SNAP_SHOT_FULL ("https://www.cryptocompare.com/api/data/coinsnapshotfullbyid"),
-		HISTO_DAY("https://min-api.cryptocompare.com/data/histoday");
+		HISTO_DAY("https://min-api.cryptocompare.com/data/histoday"),
+		TRADING_PAIRS("https://min-api.cryptocompare.com/data/all/exchanges");
 		
 		/** contains path to data in API */
 		private final String path;
@@ -73,7 +74,7 @@ public class APIHandler {
 			throw new APINotRespondingException();
 					
 		//get response (not always available), throw Exception if error
-		if(rootObject.has("Response") && rootObject.get("Response").equals("Error"))
+		if(rootObject.has("Response") && rootObject.getAsJsonPrimitive("Response").getAsString().equals("Error"))
 			throw new APINotRespondingException(rootObject.get("Message").getAsString());
 			
 		//Logger.info("API Response: " + rootObject.get("Response"));

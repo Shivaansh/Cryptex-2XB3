@@ -1,32 +1,39 @@
 package main;
 
-import java.util.Arrays;
+import java.util.Map.Entry;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import coin.Coin;
 import coin.CoinList;
-import coin.comparator.InternalOrderComparator;
+import util.APIHandler;
 import util.APINotRespondingException;
 import util.Logger;
-import util.sort.QuickSort;
+import util.APIHandler.CallType;
 
 public class APITest {
 	public static void main(String args[]) {
 		try {
+			//inialize coinlist
 			CoinList.init();
-			
-			for(Coin c : CoinList.getAlphabeticalList()) {
-				System.out.print(c.getName() + ", ");
+
+			//this code here prints all of the pairs 
+			JsonObject mainObj = APIHandler.request(CallType.TRADING_PAIRS);
+			JsonObject pairs = mainObj.getAsJsonObject("Cryptsy");
+			for(Entry<String, JsonElement> e : pairs.entrySet()) {
+				System.out.print(e.getKey() + ": ");
+				JsonArray coins = e.getValue().getAsJsonArray();
+				for(JsonElement k : coins)
+					System.out.print(k.getAsString() + ", ");
+				System.out.println();
 			}
 			
-			System.out.println();
 			
-			for(Coin c : CoinList.getList()) {
-				System.out.print(c.getName() + ", ");
-			}
-						
-		/*	double[] d = CoinList.getCoin("BTC").getDailyHistorical("USD", "10/02/2017", "09/03/2017");
-			for(double a : d)
-				System.out.println(a);*/
+			//use getByCode(), that implements a search table
+			Coin c = CoinList.getByCode("DANK");
+			System.out.println(c.getCode() + ", " + c.getPrice() + ", " + c.getMarketCap());
 			
 		} catch (APINotRespondingException e) {
 			Logger.error("API Not responding");

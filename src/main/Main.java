@@ -21,7 +21,7 @@ public class Main extends Application{
         
         //Set the icon for the MainScreen window
         MainScreen.getIcons().add(new Image("/resources/images/CryptexIcon.png"));
-        
+        		
         //Set the title of the MainScreen window
         MainScreen.setTitle("Cyptex");
         

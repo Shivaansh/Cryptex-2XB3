@@ -1,6 +1,7 @@
 package coin;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -16,6 +17,7 @@ import coin.comparator.NameComparator;
 import coin.comparator.PriceComparator;
 import util.APIHandler;
 import util.Logger;
+import util.search.Search;
 import util.APIHandler.CallType;
 import util.sort.QuickSort;
 import util.APINotRespondingException;
@@ -40,6 +42,8 @@ public class CoinList{
 
 	private static int marketLoadedTill = 0; //number of coins that have loaded market data
 	
+	private static HashMap<String, Coin> coinST; 
+	
 	
 	/**
 	 * Initializes the coin list by making an API call
@@ -52,6 +56,7 @@ public class CoinList{
 		JsonObject mainObj = APIHandler.request(CallType.COIN_LIST).get("Data").getAsJsonObject();
 	
 		Set<Entry<String, JsonElement>> dataMap = mainObj.entrySet();
+		coinST = new HashMap<>();
 		
 		list = new Coin[dataMap.size()];
 		alphabetical = new Coin[dataMap.size()];
@@ -62,6 +67,7 @@ public class CoinList{
 			Coin c = new Coin(e.getValue().getAsJsonObject());
 			list[i] = c;
 			alphabetical[i++] = c;
+			coinST.put(c.getCode(), c);
 		}
 		
 		isInit = true;
@@ -208,7 +214,7 @@ public class CoinList{
 		Entry<String, JsonElement> currDisp = iterDisp.next();
 		
 		while(currRaw != null) {
-			Coin c = getCoin(currRaw.getKey());
+			Coin c = getByName(currRaw.getKey());
 			
 			//set raw data
 			currCoinObj = currRaw.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
@@ -309,22 +315,28 @@ public class CoinList{
 	}
 	
 	/**
-	 * Finds a specific coin
+	 * Finds a specific coin using its name
 	 * @param code 3 character code associated with coin
 	 * @return Coin object representing the specific cryptocurrency
 	 */
-	public static Coin getCoin(String code) {
-		//to-do -> make faster by using binary search
-		
+	public static Coin getByName(String code) {		
 		if(!isInit)
 			throw new IllegalStateException("CoinList must be initialized!");
 		
-		for(int i = 0; i < list.length; i++) {
-			if(list[i].getCode().equals(code))
-				return list[i];
-		}
+		return Search.searchCoin(code);
+	}
+	
+	
+	/**
+	 * Finds a specific coin using its code
+	 * @param code code of coin to find
+	 * @return coin with code {@code code}
+	 */
+	public static Coin getByCode(String code) {
+		if(!isInit)
+			throw new IllegalStateException("CoinList must be initialized!");
 		
-		return null;
+		return coinST.get(code);
 	}
 	
 	/** 

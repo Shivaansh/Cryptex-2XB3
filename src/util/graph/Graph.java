@@ -82,16 +82,16 @@ public class Graph {
         this.E++;
         Coin coinFrom;
         coinFrom = CoinList.getByCode(e.getKey());
-        if ( !this.adj.containsKey(coinFrom) ) {
+        if ( coinFrom != null) {
             this.adj.put( coinFrom, new HashSet<Coin>());
-        }
+        
 		JsonArray coins = e.getValue().getAsJsonArray();
 		for(JsonElement k : coins)
 			if (k != null) {
 				this.adj.get(coinFrom).add( CoinList.getByCode(k.getAsString()));
 			}
-		System.out.println(coinFrom + "--> " + coins.toString());
-		
+		//System.out.println(coinFrom.getCode() + "--> " + coins.toString());
+        }
     }
 
 
@@ -123,16 +123,20 @@ public class Graph {
      */
     public String toString() {
     	String s = "";
-    	// Getting a Set of Key-value pairs
-        Set entrySet = this.adj.entrySet();
-     
-        // Obtaining an iterator for the entry set
-        Iterator it = entrySet.iterator();
-     
-        while(it.hasNext()){
-           Map.Entry me = (Map.Entry)it.next();
-           s = (s + "CoinFrom is: "+me.getKey().toString() + "\n");
-       }
+    	
+    	Iterator<Map.Entry<Coin, HashSet<Coin>>> itr1 = this.adj.entrySet().iterator();
+
+    	while (itr1.hasNext()) {
+    	    Map.Entry<Coin, HashSet<Coin>> entry = itr1.next();
+    	    s = s + entry.getKey() + "-->";
+    	    Iterator<Coin> itr2 = entry.getValue().iterator();
+
+    	    while (itr2.hasNext()) {
+    	        s = s + itr2.next() + ", ";
+    	    }
+    	    s = s + "\n";
+    	}
+    	
         return s;
     }
 
@@ -144,6 +148,9 @@ public class Graph {
      */
     public static void main(String[] args) {
         Graph tradeables = new Graph();
+        
+        System.out.println(tradeables.toString());
+        
         
     }
 

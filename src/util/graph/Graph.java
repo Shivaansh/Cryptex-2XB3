@@ -18,6 +18,11 @@ import util.APINotRespondingException;
 import util.Logger;
 import util.APIHandler.CallType;
 
+/**
+ * Class to create the Graph Object
+ * @author Zuhair Makda
+ *
+ */
 public class Graph {
 
     private final int V;
@@ -36,10 +41,8 @@ public class Graph {
         adj = new HashMap<Coin, HashSet<Coin>>();
         
         try {
-			//inialize coinlist
 			CoinList.init();
 
-			//this code here prints all of the pairs 
 			JsonObject mainObj = APIHandler.request(CallType.TRADING_PAIRS);
 			JsonObject pairs = mainObj.getAsJsonObject("Cryptsy");
 			for(Entry<String, JsonElement> e : pairs.entrySet()) {
@@ -72,23 +75,29 @@ public class Graph {
     }
 
     /**
-     * Adds the undirected edge v-w to this graph.
+     * Adds the undirected edge from from tradeable pairs in both directions
      *
-     * @param  v one vertex in the edge
-     * @param  w the other vertex in the edge
-     * @throws IllegalArgumentException unless both {@code 0 <= v < V} and {@code 0 <= w < V}
+     * @param  Entry e - Contains CoinFrom: CoinsTo
      */
-    public void addEdges(Entry<String, JsonElement> e) {
-        this.E++;
+    private void addEdges(Entry<String, JsonElement> e) {
+        
         Coin coinFrom;
         coinFrom = CoinList.getByCode(e.getKey());
         if ( coinFrom != null) {
-            this.adj.put( coinFrom, new HashSet<Coin>());
-        
+        	if (!this.adj.containsKey(coinFrom)) {
+        		this.adj.put( coinFrom, new HashSet<Coin>());
+        	}
 		JsonArray coins = e.getValue().getAsJsonArray();
 		for(JsonElement k : coins)
-			if (k != null) {
+			if (CoinList.getByCode(k.getAsString()) != null) {
 				this.adj.get(coinFrom).add( CoinList.getByCode(k.getAsString()));
+				if (!this.adj.containsKey( CoinList.getByCode(k.getAsString()))) {
+	        		this.adj.put(  CoinList.getByCode(k.getAsString()), new HashSet<Coin>());
+	        		this.adj(CoinList.getByCode(k.getAsString())).add(coinFrom);
+	        	} else {
+	        		this.adj(CoinList.getByCode(k.getAsString())).add(coinFrom);
+	        	}
+				this.E++;
 			}
 		//System.out.println(coinFrom.getCode() + "--> " + coins.toString());
         }
@@ -142,7 +151,7 @@ public class Graph {
 
 
     /**
-     * Unit tests the {@code Graph} data type.
+     * Testing Graph Object
      *
      * @param args the command-line arguments
      */
@@ -151,6 +160,20 @@ public class Graph {
         
         System.out.println(tradeables.toString());
         
+        Coin LTC = CoinList.getByCode("LTC");
+        Coin BTC = CoinList.getByCode("BTC");
+        Coin XRP = CoinList.getByCode("XRP");
+        
+        HashSet<Coin> ltc = tradeables.adj(LTC);
+        HashSet<Coin> xrp = tradeables.adj(XRP);
+        HashSet<Coin> btc = tradeables.adj(BTC);
+        int degXRP = tradeables.degree(XRP);
+        int degBTC = tradeables.degree(BTC);
+        int degLTC = tradeables.degree(LTC);
+        
+        System.out.println(LTC.toString() + "-->" + ltc + ", " + degLTC);
+        System.out.println(XRP.toString() + "-->" + xrp + ", " + degXRP);
+        System.out.println(BTC.toString() + "-->" + btc + ", " + degBTC);
         
     }
 

@@ -40,5 +40,8 @@ public class User {
 	public void addFavorite(Coin c) {
 		this.favorites.add(c);
 	}
+	public void removeFavorite(Coin c) {
+		this.favorites.remove(c);
+	}
 
 }

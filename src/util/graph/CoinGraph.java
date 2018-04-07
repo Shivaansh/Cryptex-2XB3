@@ -23,35 +23,35 @@ import util.APIHandler.CallType;
  * @author Zuhair Makda
  *
  */
-public class Graph {
+public class CoinGraph {
 
     private final int V;
     private int E;
     private HashMap<Coin, HashSet<Coin>> adj;
     
     /**
+     * @throws APINotRespondingException 
      * Take in CoinList
      *
      * @param  
-     * @throws 
      */
-    public Graph() {
+    public CoinGraph() throws APINotRespondingException {
         this.V = 0;
         this.E = 0;
         adj = new HashMap<Coin, HashSet<Coin>>();
         
-        try {
-			CoinList.init();
+        	if (!CoinList.isInitialized()) {
+        		CoinList.init();
+        	}
+			
 
 			JsonObject mainObj = APIHandler.request(CallType.TRADING_PAIRS);
-			JsonObject pairs = mainObj.getAsJsonObject("Cryptsy");
+			//JsonObject pairs = mainObj.getAsJsonObject("HitBTC"); 261 Vertices
+			JsonObject pairs = mainObj.getAsJsonObject("Cryptsy"); //278 Vertices
 			for(Entry<String, JsonElement> e : pairs.entrySet()) {
 				addEdges(e);
 			}
-		} catch (APINotRespondingException e) {
-			Logger.error("API Not responding");
-			e.printStackTrace();
-		}
+		
         
     }
 
@@ -154,15 +154,17 @@ public class Graph {
      * Testing Graph Object
      *
      * @param args the command-line arguments
+     * @throws APINotRespondingException 
      */
-    public static void main(String[] args) {
-        Graph tradeables = new Graph();
+    public static void main(String[] args) throws APINotRespondingException {
+        CoinGraph tradeables = new CoinGraph();
         
         System.out.println(tradeables.toString());
         
         Coin LTC = CoinList.getByCode("LTC");
         Coin BTC = CoinList.getByCode("BTC");
         Coin XRP = CoinList.getByCode("XRP");
+
         
         HashSet<Coin> ltc = tradeables.adj(LTC);
         HashSet<Coin> xrp = tradeables.adj(XRP);
@@ -175,6 +177,7 @@ public class Graph {
         System.out.println(XRP.toString() + "-->" + xrp + ", " + degXRP);
         System.out.println(BTC.toString() + "-->" + btc + ", " + degBTC);
         
+        System.out.println(tradeables.V());
     }
 
 }

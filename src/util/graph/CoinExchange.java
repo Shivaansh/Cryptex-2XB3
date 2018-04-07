@@ -3,6 +3,7 @@ package util.graph;
 import coin.Coin;
 import coin.CoinList;
 import sun.misc.Queue;
+import util.APINotRespondingException;
 
 import java.util.HashMap;
 import java.util.Stack;
@@ -13,7 +14,7 @@ import java.util.Stack;
  * @author Zuhair Makda
  *
  */
-public class BFS {
+public class CoinExchange {
 
 	private static final int INFINITY = Integer.MAX_VALUE;
     private HashMap<Coin, Boolean> marked;  // marked
@@ -26,7 +27,7 @@ public class BFS {
      * @param G the graph
      * @param
      */
-    public BFS(Graph G, Coin s) {
+    public CoinExchange(CoinGraph G, Coin s) {
     	this.marked = new HashMap<Coin, Boolean>();
     	this.edgeTo = new HashMap<Coin, Coin>();
     	this.distTo = new HashMap<Coin, Integer>();
@@ -42,7 +43,7 @@ public class BFS {
 
 
     // breadth-first search from a single source
-    private void bfs(Graph G, Coin s) {
+    private void bfs(CoinGraph G, Coin s) {
         Queue<Coin> q = new Queue<Coin>();
         /*for (int v = 0; v < G.V(); v++)
             distTo[v] = INFINITY;
@@ -92,7 +93,7 @@ public class BFS {
     }
 
     
-    public Iterable<Coin> pathTo(Coin v) {
+    public Iterable<Coin> tradesTo(Coin v) {
         if (!hasPathTo(v)) return null;
         Stack<Coin> path = new Stack<Coin>();
         Coin x = null;
@@ -124,32 +125,16 @@ public class BFS {
      * Unit tests the {@code BreadthFirstPaths} data type.
      *
      * @param args the command-line arguments
+     * @throws APINotRespondingException 
      */
-    public static void main(String[] args) {
-        Graph G = new Graph();
+    public static void main(String[] args) throws APINotRespondingException {
+        CoinGraph G = new CoinGraph();
         System.out.println(G.toString());
 
-        BFS bfs = new BFS(G, CoinList.getByCode("ZCC"));
+        CoinExchange bfs = new CoinExchange(G, CoinList.getByCode("LA"));
 
-        /*
-         
-            if (bfs.hasPathTo(v)) {
-                StdOut.printf("%d to %d (%d):  ", s, v, bfs.distTo(v));
-                for (int x : bfs.pathTo(v)) {
-                    if (x == s) StdOut.print(x);
-                    else        StdOut.print("-" + x);
-                }
-                StdOut.println();
-            }
-
-            else {
-                StdOut.printf("%d to %d (-):  not connected\n", s, v);
-            }
-
-        }
-        */
-        System.out.println(bfs.hasPathTo(CoinList.getByCode("FLO")));
-        System.out.println(bfs.pathToString(bfs.pathTo(CoinList.getByCode("FLO"))));
+        System.out.println(bfs.hasPathTo(CoinList.getByCode("CRPT")));
+        System.out.println(bfs.pathToString(bfs.tradesTo(CoinList.getByCode("CRPT"))));
     }
 
 }

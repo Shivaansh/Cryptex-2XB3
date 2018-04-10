@@ -30,10 +30,11 @@ public class CoinGraph {
     private HashMap<Coin, HashSet<Coin>> adj;
     
     /**
+     * @Brief - Take in the CoinList for trade pairs 
+     * @Details - Add Edges for each trade pair
      * @throws APINotRespondingException 
      * Take in CoinList
      *
-     * @param  
      */
     public CoinGraph() throws APINotRespondingException {
         this.V = 0;

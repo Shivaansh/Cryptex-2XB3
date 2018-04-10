@@ -22,10 +22,10 @@ public class CoinExchange {
     private HashMap<Coin, Integer> distTo;      // distTo= number of edges shortest s-v path
 
     /**
-     * Computes the shortest path between the source vertex {@code s}
-     * and every other vertex in the graph {@code G}.
+     * Computes the shortest path between the source vertex Coin s
+     * and every other vertex in the CoinGraph G.
      * @param G the graph
-     * @param
+     * @param Coin s - the Coin to start computing paths from
      */
     public CoinExchange(CoinGraph G, Coin s) {
     	this.marked = new HashMap<Coin, Boolean>();
@@ -41,8 +41,11 @@ public class CoinExchange {
     }
 
 
-
-    // breadth-first search from a single source
+    /**
+     * Function to handle breadth-first search from a single source
+     * @param G - Graph of all the coin vertices available to trade
+     * @param s - source vertex to find paths
+     */
     private void bfs(CoinGraph G, Coin s) {
         Queue<Coin> q = new Queue<Coin>();
         /*for (int v = 0; v < G.V(); v++)
@@ -74,25 +77,30 @@ public class CoinExchange {
 
 
     /**
-     * Is there a path between the source vertex {@code s} and vertex {@code v}?
-     * @param v the vertex
-     * @return {@code true} if there is a path, and {@code false} otherwise
+     * Is there a path between the source vertex  Coin s (From constructor) and Coin v
+     * @param v the Coin to check if I can trade with source Coin s
+     * @return true if there is a path, and false otherwise
      */
     public boolean hasPathTo(Coin v) {
         return this.marked.get(v);
     }
 
     /**
-     * Returns the number of edges in a shortest path between the source vertex {@code s}
-     * (or sources) and vertex {@code v}?
-     * @param v the vertex
+     * Returns the number of edges in a path between the source vertex Coin s
+     * and vertex Coin v
+     * @param v the Coin to find distance from source
      * @return the number of edges in a shortest path
      */
     public int distTo(int v) {
         return this.distTo.get(v);
     }
 
-    
+    /**
+     * This function returns a Stack of all Coins in a path from Source Coin s to Coin v
+     * All the possible tradeable coins in the path
+     * @param Coin v to find the path
+     * @return Stack of all coins in path
+     */
     public Iterable<Coin> tradesTo(Coin v) {
         if (!hasPathTo(v)) return null;
         Stack<Coin> path = new Stack<Coin>();
@@ -103,7 +111,11 @@ public class CoinExchange {
         return path;
     }
     
-    
+    /**
+     * Takes the iterable stack of the path and returns it as a string
+     * @param path - stack of Coins in the path
+     * @return - string representation of Path
+     */
     public String pathToString(Iterable<Coin> path) {
     	
     	String s = "";

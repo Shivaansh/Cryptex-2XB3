@@ -123,13 +123,13 @@ public class CoinMainController implements Initializable{
         nameCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
         capCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
         changeCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
-
-        nameCol.setReorderable(false);
+        
+        /*nameCol.setReorderable(false);
         priceCol.setReorderable(false);
         codeCol.setReorderable(false);
         numCol.setReorderable(false);
         capCol.setReorderable(false);
-
+	*/
         //numCol.setCellValueFactory(new PropertyValueFactory<Coin, Integer>("number"));
         codeCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("code"));
         nameCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("name"));

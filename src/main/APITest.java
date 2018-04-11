@@ -27,13 +27,10 @@ public class APITest {
 				JsonArray coins = e.getValue().getAsJsonArray();
 				for(JsonElement k : coins)
 					System.out.print(k.getAsString() + ", ");
-				
 				System.out.println();
 			}
 			
-			//use getByCode(), that implements a search table
-			Coin c = CoinList.getByCode("DANK");
-			System.out.println(c.getCode() + ", " + c.getPrice() + ", " + c.getMarketCap());
+
 			
 		} catch (APINotRespondingException e) {
 			Logger.error("API Not responding");

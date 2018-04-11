@@ -143,10 +143,10 @@ public class CoinExchange {
         CoinGraph G = new CoinGraph();
         System.out.println(G.toString());
 
-        CoinExchange bfs = new CoinExchange(G, CoinList.getByCode("LA"));
+        CoinExchange bfs = new CoinExchange(G, CoinList.getByCode("SSV"));
 
-        System.out.println(bfs.hasPathTo(CoinList.getByCode("CRPT")));
-        System.out.println(bfs.pathToString(bfs.tradesTo(CoinList.getByCode("CRPT"))));
+        System.out.println(bfs.hasPathTo(CoinList.getByCode("HTML5")));
+        System.out.println(bfs.pathToString(bfs.tradesTo(CoinList.getByCode("HTML5"))));
     }
 
 }

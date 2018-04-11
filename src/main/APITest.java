@@ -30,10 +30,7 @@ public class APITest {
 				System.out.println();
 			}
 			
-			
-			//use getByCode(), that implements a search table
-			Coin c = CoinList.getByCode("DANK");
-			System.out.println(c.getCode() + ", " + c.getPrice() + ", " + c.getMarketCap());
+
 			
 		} catch (APINotRespondingException e) {
 			Logger.error("API Not responding");

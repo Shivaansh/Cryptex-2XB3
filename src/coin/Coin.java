@@ -20,7 +20,7 @@ import util.APINotRespondingException;
  *
  */
 public class Coin{
-	
+	//g
 	private String name; 
 	private String code;
 	

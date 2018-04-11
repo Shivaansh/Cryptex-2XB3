@@ -271,16 +271,28 @@ public class CoinMainController implements Initializable{
         });
  
         MenuItem alphabetical = new MenuItem("Alphabetical");
-        alphabetical.setOnAction((event) -> {sortList(SortOrder.ALPHABETICAL);});
+        alphabetical.setOnAction((event) -> {
+            sortList(SortOrder.ALPHABETICAL);
+            coinPage.setCurrentPageIndex(0);
+        });
         
         MenuItem price = new MenuItem("Price");
-        price.setOnAction((event) -> {sortList(SortOrder.PRICE);});
+        price.setOnAction((event) -> {
+            sortList(SortOrder.PRICE);
+            coinPage.setCurrentPageIndex(0);
+        });
         
         MenuItem mktcap = new MenuItem("Market");
-        mktcap.setOnAction((event) -> {sortList(SortOrder.MKTCAP);});
+        mktcap.setOnAction((event) -> {
+            sortList(SortOrder.MKTCAP);
+            coinPage.setCurrentPageIndex(0);
+        });
         
         MenuItem change = new MenuItem("24h Change");
-        change.setOnAction((event) -> {sortList(SortOrder.CHANGE);});
+        change.setOnAction((event) -> {
+            sortList(SortOrder.CHANGE);
+            coinPage.setCurrentPageIndex(0);
+        });
         
         sortButton.getItems().clear();
         sortButton.getItems().add(alphabetical);

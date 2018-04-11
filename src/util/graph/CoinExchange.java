@@ -6,6 +6,7 @@ import sun.misc.Queue;
 import util.APINotRespondingException;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Stack;
 
 /**
@@ -47,31 +48,29 @@ public class CoinExchange {
      * @param s - source vertex to find paths
      */
     private void bfs(CoinGraph G, Coin s) {
-        Queue<Coin> q = new Queue<Coin>();
+        LinkedList<Coin> q = new LinkedList<Coin>();
         /*for (int v = 0; v < G.V(); v++)
             distTo[v] = INFINITY;
         */
         this.distTo.put(s, 0);
         this.marked.put(s, true);
-        q.enqueue(s);
+        q.add(s);
 
         while (!q.isEmpty()) {
-            Coin v = null;
-			try {
-				v = q.dequeue();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            for (Coin w : G.adj(v)) {
-                if (!this.marked.get(w)) {
-                	this.edgeTo.put(w, v);
-                	this.distTo.put(w, this.distTo.get(v)+1);
-                	this.marked.put(w, true);
-                    q.enqueue(w);
-                }
-            	
-            }
+            Coin v;
+			v = q.poll(); 
+			
+			if (G.adj(v) != null) {
+	            for (Coin w : G.adj(v)) {
+	                if (!this.marked.get(w)) {
+	                	this.edgeTo.put(w, v);
+	                	this.distTo.put(w, this.distTo.get(v)+1);
+	                	this.marked.put(w, true);
+	                    q.add(w);
+	                }
+	            	
+	            }
+            } 
         }
     }
 
@@ -119,16 +118,17 @@ public class CoinExchange {
     public String pathToString(Iterable<Coin> path) {
     	
     	String s = "";
-    	Stack<Coin> q = new Stack<Coin>();
-    	
-    	for (Coin x : path) {
-    		q.push(x);
+    	if (path != null) {
+	    	Stack<Coin> q = new Stack<Coin>();
+	    	for (Coin x : path) {
+	    		q.push(x);
+	    	}
+	    	while (!q.isEmpty()) {
+					s = s + q.pop().toString() + "->";
+	    	}
+    	} else {
+    		s = s + "Cannot make trade in this exchange";
     	}
-    	
-    	while (!q.isEmpty()) {
-				s = s + q.pop().toString() + "->";
-    	}
-    	
     	return s;
     	
     }
@@ -143,10 +143,10 @@ public class CoinExchange {
         CoinGraph G = new CoinGraph();
         System.out.println(G.toString());
 
-        CoinExchange bfs = new CoinExchange(G, CoinList.getByCode("SSV"));
+        CoinExchange bfs = new CoinExchange(G, CoinList.getByCode("ELP"));
 
-        System.out.println(bfs.hasPathTo(CoinList.getByCode("HTML5")));
-        System.out.println(bfs.pathToString(bfs.tradesTo(CoinList.getByCode("HTML5"))));
+        System.out.println(bfs.hasPathTo(CoinList.getByCode("TAK")));
+        System.out.println(bfs.pathToString(bfs.tradesTo(CoinList.getByCode("TAK"))));
     }
 
 }

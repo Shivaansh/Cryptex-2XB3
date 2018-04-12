@@ -131,17 +131,24 @@ public class CoinMainController implements Initializable{
 
     public TableView<Coin> createPage(int pageIndex){
         tableView.scrollTo(0);
+
         priceCol.prefWidthProperty().bind(tableView.widthProperty().subtract(225).divide(4));
         nameCol.prefWidthProperty().bind(tableView.widthProperty().subtract(225).divide(4));
         capCol.prefWidthProperty().bind(tableView.widthProperty().subtract(225).divide(4));
         changeCol.prefWidthProperty().bind(tableView.widthProperty().subtract(225).divide(4));
 
         nameCol.setReorderable(false);
+        priceCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
+        nameCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
+        capCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
+        changeCol.prefWidthProperty().bind(tableView.widthProperty().subtract(165).divide(4));
+        
+        /*nameCol.setReorderable(false);
         priceCol.setReorderable(false);
         codeCol.setReorderable(false);
         numCol.setReorderable(false);
         capCol.setReorderable(false);
-
+	*/
         //numCol.setCellValueFactory(new PropertyValueFactory<Coin, Integer>("number"));
         codeCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("code"));
         nameCol.setCellValueFactory(new PropertyValueFactory<Coin, String>("name"));

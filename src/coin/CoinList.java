@@ -41,10 +41,9 @@ public class CoinList{
 	private static boolean allMarketLoaded = false; //if all coins added to market data
 
 	private static int marketLoadedTill = 0; //number of coins that have loaded market data
-
-	private static HashMap<String, Coin> coinST;
-
-
+	
+	private static HashMap<String, Coin> coinST; 
+	
 	/**
 	 * Initializes the coin list by making an API call
 	 * @throws APINotRespondingException if API does not respond or responds with an error
@@ -215,7 +214,7 @@ public class CoinList{
 
 		while(currRaw != null) {
 			Coin c = getByName(currRaw.getKey());
-
+      
 			//set raw data
 			currCoinObj = currRaw.getValue().getAsJsonObject().getAsJsonObject(relCoinCode);
 
@@ -319,15 +318,14 @@ public class CoinList{
 	 * @param code 3 character code associated with coin
 	 * @return Coin object representing the specific cryptocurrency
 	 */
-	public static Coin getByName(String code) {
+	public static Coin getByName(String code) {		
 		if(!isInit)
 			throw new IllegalStateException("CoinList must be initialized!");
-
+		
 		return Search.searchCoin(code);
 	}
-
-
-	/**
+	
+		/**
 	 * Finds a specific coin using its code
 	 * @param code code of coin to find
 	 * @return coin with code {@code code}

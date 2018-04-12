@@ -2,7 +2,6 @@ package util.graph;
 
 import coin.Coin;
 import coin.CoinList;
-import sun.misc.Queue;
 import util.APINotRespondingException;
 
 import java.util.HashMap;

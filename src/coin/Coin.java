@@ -23,7 +23,7 @@ public class Coin{
 	//g
 	private String name; 
 	private String code;
-	
+
 	private double totalSupply; 
 	private int internalOrder;
 	private int id; 
@@ -47,7 +47,7 @@ public class Coin{
 		code = jsonObject.get("Name").getAsString();
 		internalOrder = jsonObject.get("SortOrder").getAsInt();
 		id = jsonObject.get("Id").getAsInt();
-		
+
 		//totalSupply not always consistently formatted in API
 		String totalSupplyStr = jsonObject.getAsJsonPrimitive("TotalCoinSupply").getAsString().trim().replace(",", "");
 		try {
@@ -56,7 +56,7 @@ public class Coin{
 			totalSupply = Double.NaN;
 		}
 	}
-	
+
 	/**
 	 * Returns market cap of coin currently stored
 	 * @return current market Cap of coin

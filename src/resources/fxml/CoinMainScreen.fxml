@@ -21,7 +21,6 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="700.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="guicontrollers.CoinMainController">
@@ -37,10 +36,10 @@
                   </ImageView>
                   <BorderPane layoutX="235.0" layoutY="-2.0" prefHeight="52.0" prefWidth="398.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                      <center>
-                        <JFXTextField fx:id="searchBar" focusColor="#405aa800" onAction="#searchEntered" prefHeight="26.0" prefWidth="350.0" promptText="Search" style="-fx-border-color: black;" unFocusColor="#4d4d4d00" BorderPane.alignment="CENTER" />
+                        <JFXTextField fx:id="searchBar" focusColor="#405aa800" prefHeight="26.0" prefWidth="350.0" promptText="Search" style="-fx-border-color: black;" unFocusColor="#4d4d4d00" BorderPane.alignment="CENTER" />
                      </center>
                      <right>
-                        <MaterialDesignIconView fx:id="searchButton" glyphName="MAGNIFY" onMouseClicked="#searchClicked" size="20" BorderPane.alignment="CENTER" />
+                        <MaterialDesignIconView fx:id="searchButton" glyphName="MAGNIFY" size="20" BorderPane.alignment="CENTER" />
                      </right>
                   </BorderPane>
                   <JFXHamburger fx:id="hamburger" layoutX="24.0" layoutY="16.0" onMouseClicked="#hamClick" onMouseEntered="#showHand" onMouseExited="#showDefault" />
@@ -154,8 +153,9 @@
                         <AnchorPane fx:id="mainAnch" prefHeight="650.0" prefWidth="485.0" style="-fx-background-color: #00BAFF;" BorderPane.alignment="CENTER">
                            <children>
                               <Pagination fx:id="coinPage" maxPageIndicatorCount="5" pageCount="0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white; -fx-text-size: 30;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                              <TableView fx:id="tableView" layoutX="270.0" layoutY="245.0" prefHeight="200.0" prefWidth="200.0" style="-fx-font-size: 17px;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TableView fx:id="tableView" layoutX="270.0" layoutY="245.0" prefHeight="200.0" prefWidth="200.0" style="-fx-font-size: 17px;" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <columns>
+                                    <TableColumn fx:id="likeCol" minWidth="30.0" prefWidth="60.0" resizable="false" text="Like" />
                                     <TableColumn fx:id="numCol" editable="false" prefWidth="50.0" resizable="false" sortable="false" style="-fx-alignment: CENTER;" text="#" />
                                     <TableColumn fx:id="codeCol" editable="false" prefWidth="85.0" resizable="false" sortable="false" style="-fx-alignment: CENTER; -fx-padding: 5;" text="Code" />
                                     <TableColumn fx:id="nameCol" editable="false" prefWidth="75.0" resizable="false" sortable="false" style="-fx-alignment: CENTER; -fx-font-weight: bold;" text="Name" />
@@ -174,6 +174,11 @@
                                     <MenuItem mnemonicParsing="false" text="Action 2" />
                                  </items>
                               </MenuButton>
+                              <Label fx:id="sortLabel" layoutX="594.0" layoutY="615.0" AnchorPane.bottomAnchor="17.00000000000002" AnchorPane.rightAnchor="80.0">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </AnchorPane>
                      </center>
@@ -184,24 +189,7 @@
       </BorderPane>
       <AnchorPane fx:id="drawer" layoutX="-200.0" layoutY="52.0" prefHeight="649.0" prefWidth="200.0" style="-fx-background-color: black;" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="52.0">
          <children>
-            <BorderPane prefHeight="200.0" prefWidth="345.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <top>
-                  <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                     <children>
-                        <AnchorPane prefHeight="162.0" prefWidth="200.0">
-                           <children>
-                              <MaterialDesignIconView fill="WHITE" glyphName="ACCOUNT_BOX" layoutX="60.0" layoutY="92.0" size="80" />
-                              <Label fx:id="name" alignment="CENTER" contentDisplay="CENTER" layoutY="111.0" prefHeight="18.0" prefWidth="96.0" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                                 <font>
-                                    <Font name="System Bold" size="12.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </AnchorPane>
-                     </children>
-                  </VBox>
-               </top>
-            </BorderPane>
+            <BorderPane fx:id="menuBorder" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children></AnchorPane>
    </children>
 </AnchorPane>

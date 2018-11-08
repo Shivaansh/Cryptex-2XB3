@@ -3,4 +3,6 @@
 
 Final project for SFWR ENG 2XB3 - McMaster University 
 
-Estimated completion: April 2018
+A desktop application made with Java to compare various cryptocurrencies and monitor their market values.
+Responsibilities:
+I was mainly responsible for implementing the Sort functionality. I used a comparator-based implementation of QuickSort.
